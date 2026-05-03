@@ -1,0 +1,3393 @@
+{
+  "version": 3,
+  "sources": [
+    "repayment_escrow.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAmCA;;AAAA;AAAA;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;AAwBK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAUG;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;;AAAA;AACA;;AAAA;AAAA;AACA;AAA6B;AAA7B;AACA;AAA2B;AAA3B;AACA;AAA+B;AAA/B;AACA;;AAAgC;AAAhC;AAlBH;AAAA;AAoBA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAGU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AACA;;AAAA;AAAA;AAJH;AAAA;AAMA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAGU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AACA;;AAAA;AAAA;AAJH;AAAA;AAMA;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAWO;;AAAgC;AAAA;;AAAA;AAAA;AAAhC;AAAA;;;AACG;;AAAc;AAAA;AAAA;AAAA;AAAd;AADH;;;;AADJ;AAIO;;AAAA;;AAAoB;;AAApB;AAAP;AAEQ;;AACR;AAAA;AAGmB;AAAQ;;;AAAR;AAA+B;AAAhC;AACE;;AAAQ;;;AAAR;AAAgC;AAAjC;AACL;;AAAA;;AAAA;AAAA;;AAAA;AAGd;AACa;AAAA;;AAAA;AAAA;;;;;;;AADb;;;AAGQ;;;AAHR;AAMA;AACa;AAAA;;AAAA;AAAA;;;;;;;AADb;;;AAGQ;;;AAHR;AAOuB;AAAA;;AAAA;AAAA;AAEvB;AACa;;AAAA;;;;;;;AADb;;;AAGQ;;;AAHR;AAOA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AACA;AAAA;;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAlDH;AAAA;;;;;AA6DuB;AAAA;AAAA;AAAA;AAAZ;AACY;AAAA;AAAA;AAAA;AAAZ;AACY;AAAA;AAAA;AAAA;AAAZ;AACY;AAAA;;AAAA;AAAA;AAAZ;AALD;;AAAA;;AAAA;AAAA;;AAAA;AAAA;AAAA;AALV;;AAAA;AAAA;AAAA;AAAA;AAAA;AAcA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAKsB;AAAS;;;AAAT;AAAgC;AAAjC;AACE;;AAAS;;;AAAT;AAAiC;AAAlC;AACL;;AAAA;;AAAA;AAAA;;AAAA;AAGN;AACA;;AAAA;AACA;;AAAA;AAJD;;AAAA;AAAA;AAAA;AARV;;AAAA;AAAA;AAAA;AAAA;AAAA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1 32 10000"
+    },
+    "8": {
+      "op": "bytecblock \"admin\" \"total_proc\" \"to_pool\" \"to_treas\" \"to_insure\" \"treasury\" \"insurance\" \"loan_mgr\" \"pool_id\" 0x151f7c75"
+    },
+    "95": {
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "97": {
+      "op": "!",
+      "defined_out": [
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "tmp%1#1"
+      ]
+    },
+    "98": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "99": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "101": {
+      "op": "bz main_create_NoOp@11",
+      "stack_out": []
+    },
+    "104": {
+      "op": "pushbytess 0xfcd8caaf 0x168d0951 0x6df16183 0xdf09b608 0x21abef1d // method \"set_treasury(address)void\", method \"set_insurance(address)void\", method \"process_repayment(pay)void\", method \"get_stats()(uint64,uint64,uint64,uint64)\", method \"get_split_preview(uint64)(uint64,uint64,uint64)\"",
+      "defined_out": [
+        "Method(get_split_preview(uint64)(uint64,uint64,uint64))",
+        "Method(get_stats()(uint64,uint64,uint64,uint64))",
+        "Method(process_repayment(pay)void)",
+        "Method(set_insurance(address)void)",
+        "Method(set_treasury(address)void)"
+      ],
+      "stack_out": [
+        "Method(set_treasury(address)void)",
+        "Method(set_insurance(address)void)",
+        "Method(process_repayment(pay)void)",
+        "Method(get_stats()(uint64,uint64,uint64,uint64))",
+        "Method(get_split_preview(uint64)(uint64,uint64,uint64))"
+      ]
+    },
+    "131": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(get_split_preview(uint64)(uint64,uint64,uint64))",
+        "Method(get_stats()(uint64,uint64,uint64,uint64))",
+        "Method(process_repayment(pay)void)",
+        "Method(set_insurance(address)void)",
+        "Method(set_treasury(address)void)",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "Method(set_treasury(address)void)",
+        "Method(set_insurance(address)void)",
+        "Method(process_repayment(pay)void)",
+        "Method(get_stats()(uint64,uint64,uint64,uint64))",
+        "Method(get_split_preview(uint64)(uint64,uint64,uint64))",
+        "tmp%4#0"
+      ]
+    },
+    "134": {
+      "op": "match set_treasury set_insurance process_repayment get_stats get_split_preview",
+      "stack_out": []
+    },
+    "146": {
+      "op": "err"
+    },
+    "147": {
+      "block": "main_create_NoOp@11",
+      "stack_in": [],
+      "op": "pushbytes 0x02d02a05 // method \"create(address,uint64,uint64,address,address)void\"",
+      "defined_out": [
+        "Method(create(address,uint64,uint64,address,address)void)"
+      ],
+      "stack_out": [
+        "Method(create(address,uint64,uint64,address,address)void)"
+      ]
+    },
+    "153": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(create(address,uint64,uint64,address,address)void)",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "Method(create(address,uint64,uint64,address,address)void)",
+        "tmp%5#0"
+      ]
+    },
+    "156": {
+      "op": "match create",
+      "stack_out": []
+    },
+    "160": {
+      "op": "err"
+    },
+    "161": {
+      "subroutine": "cadencia.repayment_escrow.RepaymentEscrow.create[routing]",
+      "params": {},
+      "block": "create",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "admin#0"
+      ],
+      "stack_out": [
+        "admin#0"
+      ]
+    },
+    "164": {
+      "op": "dup",
+      "defined_out": [
+        "admin#0",
+        "admin#0 (copy)"
+      ],
+      "stack_out": [
+        "admin#0",
+        "admin#0 (copy)"
+      ]
+    },
+    "165": {
+      "op": "len",
+      "defined_out": [
+        "admin#0",
+        "len%0#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "len%0#0"
+      ]
+    },
+    "166": {
+      "op": "intc_2 // 32",
+      "defined_out": [
+        "32",
+        "admin#0",
+        "len%0#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "len%0#0",
+        "32"
+      ]
+    },
+    "167": {
+      "op": "==",
+      "defined_out": [
+        "admin#0",
+        "eq%0#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "eq%0#0"
+      ]
+    },
+    "168": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "stack_out": [
+        "admin#0"
+      ]
+    },
+    "169": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "admin#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "tmp%2#0"
+      ]
+    },
+    "172": {
+      "op": "dup",
+      "defined_out": [
+        "admin#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "admin#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "173": {
+      "op": "len",
+      "defined_out": [
+        "admin#0",
+        "len%1#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "tmp%2#0",
+        "len%1#0"
+      ]
+    },
+    "174": {
+      "op": "pushint 8",
+      "defined_out": [
+        "8",
+        "admin#0",
+        "len%1#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "tmp%2#0",
+        "len%1#0",
+        "8"
+      ]
+    },
+    "176": {
+      "op": "==",
+      "defined_out": [
+        "admin#0",
+        "eq%1#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "tmp%2#0",
+        "eq%1#0"
+      ]
+    },
+    "177": {
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
+      "stack_out": [
+        "admin#0",
+        "tmp%2#0"
+      ]
+    },
+    "178": {
+      "op": "btoi",
+      "defined_out": [
+        "admin#0",
+        "loan_manager_id#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0"
+      ]
+    },
+    "179": {
+      "op": "txna ApplicationArgs 3",
+      "defined_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0"
+      ]
+    },
+    "182": {
+      "op": "dup",
+      "defined_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0",
+        "tmp%4#0 (copy)"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0",
+        "tmp%4#0 (copy)"
+      ]
+    },
+    "183": {
+      "op": "len",
+      "defined_out": [
+        "admin#0",
+        "len%2#0",
+        "loan_manager_id#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0",
+        "len%2#0"
+      ]
+    },
+    "184": {
+      "op": "pushint 8",
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0",
+        "len%2#0",
+        "8"
+      ]
+    },
+    "186": {
+      "op": "==",
+      "defined_out": [
+        "admin#0",
+        "eq%2#0",
+        "loan_manager_id#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0",
+        "eq%2#0"
+      ]
+    },
+    "187": {
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "tmp%4#0"
+      ]
+    },
+    "188": {
+      "op": "btoi",
+      "defined_out": [
+        "admin#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0"
+      ]
+    },
+    "189": {
+      "op": "txna ApplicationArgs 4",
+      "defined_out": [
+        "admin#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0"
+      ]
+    },
+    "192": {
+      "op": "dup",
+      "defined_out": [
+        "admin#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0",
+        "treasury#0 (copy)"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "treasury#0 (copy)"
+      ]
+    },
+    "193": {
+      "op": "len",
+      "defined_out": [
+        "admin#0",
+        "len%3#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "len%3#0"
+      ]
+    },
+    "194": {
+      "op": "intc_2 // 32",
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "len%3#0",
+        "32"
+      ]
+    },
+    "195": {
+      "op": "==",
+      "defined_out": [
+        "admin#0",
+        "eq%3#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "eq%3#0"
+      ]
+    },
+    "196": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0"
+      ]
+    },
+    "197": {
+      "op": "txna ApplicationArgs 5",
+      "defined_out": [
+        "admin#0",
+        "insurance#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0"
+      ]
+    },
+    "200": {
+      "op": "dup",
+      "defined_out": [
+        "admin#0",
+        "insurance#0",
+        "insurance#0 (copy)",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "insurance#0 (copy)"
+      ]
+    },
+    "201": {
+      "op": "len",
+      "defined_out": [
+        "admin#0",
+        "insurance#0",
+        "len%4#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "len%4#0"
+      ]
+    },
+    "202": {
+      "op": "intc_2 // 32",
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "len%4#0",
+        "32"
+      ]
+    },
+    "203": {
+      "op": "==",
+      "defined_out": [
+        "admin#0",
+        "eq%4#0",
+        "insurance#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "eq%4#0"
+      ]
+    },
+    "204": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0"
+      ]
+    },
+    "205": {
+      "op": "bytec_0 // \"admin\"",
+      "defined_out": [
+        "\"admin\"",
+        "admin#0",
+        "insurance#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "admin#0",
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "\"admin\""
+      ]
+    },
+    "206": {
+      "op": "uncover 5",
+      "stack_out": [
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "\"admin\"",
+        "admin#0"
+      ]
+    },
+    "208": {
+      "op": "app_global_put",
+      "stack_out": [
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0"
+      ]
+    },
+    "209": {
+      "op": "bytec 7 // \"loan_mgr\"",
+      "defined_out": [
+        "\"loan_mgr\"",
+        "insurance#0",
+        "lending_pool_id#0",
+        "loan_manager_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "loan_manager_id#0",
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "\"loan_mgr\""
+      ]
+    },
+    "211": {
+      "op": "uncover 4",
+      "stack_out": [
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "\"loan_mgr\"",
+        "loan_manager_id#0"
+      ]
+    },
+    "213": {
+      "op": "app_global_put",
+      "stack_out": [
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0"
+      ]
+    },
+    "214": {
+      "op": "bytec 8 // \"pool_id\"",
+      "defined_out": [
+        "\"pool_id\"",
+        "insurance#0",
+        "lending_pool_id#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "lending_pool_id#0",
+        "treasury#0",
+        "insurance#0",
+        "\"pool_id\""
+      ]
+    },
+    "216": {
+      "op": "uncover 3",
+      "stack_out": [
+        "treasury#0",
+        "insurance#0",
+        "\"pool_id\"",
+        "lending_pool_id#0"
+      ]
+    },
+    "218": {
+      "op": "app_global_put",
+      "stack_out": [
+        "treasury#0",
+        "insurance#0"
+      ]
+    },
+    "219": {
+      "op": "bytec 5 // \"treasury\"",
+      "defined_out": [
+        "\"treasury\"",
+        "insurance#0",
+        "treasury#0"
+      ],
+      "stack_out": [
+        "treasury#0",
+        "insurance#0",
+        "\"treasury\""
+      ]
+    },
+    "221": {
+      "op": "uncover 2",
+      "stack_out": [
+        "insurance#0",
+        "\"treasury\"",
+        "treasury#0"
+      ]
+    },
+    "223": {
+      "op": "app_global_put",
+      "stack_out": [
+        "insurance#0"
+      ]
+    },
+    "224": {
+      "op": "bytec 6 // \"insurance\"",
+      "defined_out": [
+        "\"insurance\"",
+        "insurance#0"
+      ],
+      "stack_out": [
+        "insurance#0",
+        "\"insurance\""
+      ]
+    },
+    "226": {
+      "op": "swap",
+      "stack_out": [
+        "\"insurance\"",
+        "insurance#0"
+      ]
+    },
+    "227": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "228": {
+      "op": "bytec_1 // \"total_proc\"",
+      "defined_out": [
+        "\"total_proc\""
+      ],
+      "stack_out": [
+        "\"total_proc\""
+      ]
+    },
+    "229": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"total_proc\"",
+        "0"
+      ],
+      "stack_out": [
+        "\"total_proc\"",
+        "0"
+      ]
+    },
+    "230": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "231": {
+      "op": "bytec_2 // \"to_pool\"",
+      "defined_out": [
+        "\"to_pool\""
+      ],
+      "stack_out": [
+        "\"to_pool\""
+      ]
+    },
+    "232": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "\"to_pool\"",
+        "0"
+      ]
+    },
+    "233": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "234": {
+      "op": "bytec_3 // \"to_treas\"",
+      "defined_out": [
+        "\"to_treas\""
+      ],
+      "stack_out": [
+        "\"to_treas\""
+      ]
+    },
+    "235": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "\"to_treas\"",
+        "0"
+      ]
+    },
+    "236": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "237": {
+      "op": "bytec 4 // \"to_insure\"",
+      "defined_out": [
+        "\"to_insure\""
+      ],
+      "stack_out": [
+        "\"to_insure\""
+      ]
+    },
+    "239": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "\"to_insure\"",
+        "0"
+      ]
+    },
+    "240": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "241": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "242": {
+      "op": "return",
+      "stack_out": []
+    },
+    "243": {
+      "subroutine": "cadencia.repayment_escrow.RepaymentEscrow.set_treasury[routing]",
+      "params": {},
+      "block": "set_treasury",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "new_treasury#0"
+      ],
+      "stack_out": [
+        "new_treasury#0"
+      ]
+    },
+    "246": {
+      "op": "dup",
+      "defined_out": [
+        "new_treasury#0",
+        "new_treasury#0 (copy)"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "new_treasury#0 (copy)"
+      ]
+    },
+    "247": {
+      "op": "len",
+      "defined_out": [
+        "len%0#0",
+        "new_treasury#0"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "len%0#0"
+      ]
+    },
+    "248": {
+      "op": "intc_2 // 32",
+      "defined_out": [
+        "32",
+        "len%0#0",
+        "new_treasury#0"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "len%0#0",
+        "32"
+      ]
+    },
+    "249": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "new_treasury#0"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "eq%0#0"
+      ]
+    },
+    "250": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "stack_out": [
+        "new_treasury#0"
+      ]
+    },
+    "251": {
+      "op": "txn Sender",
+      "defined_out": [
+        "new_treasury#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "tmp%0#1"
+      ]
+    },
+    "253": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "new_treasury#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "254": {
+      "op": "bytec_0 // \"admin\"",
+      "defined_out": [
+        "\"admin\"",
+        "0",
+        "new_treasury#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "tmp%0#1",
+        "0",
+        "\"admin\""
+      ]
+    },
+    "255": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "new_treasury#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "256": {
+      "error": "check self.admin exists",
+      "op": "assert // check self.admin exists",
+      "stack_out": [
+        "new_treasury#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "257": {
+      "op": "==",
+      "defined_out": [
+        "new_treasury#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "tmp%1#1"
+      ]
+    },
+    "258": {
+      "error": "only admin",
+      "op": "assert // only admin",
+      "stack_out": [
+        "new_treasury#0"
+      ]
+    },
+    "259": {
+      "op": "bytec 5 // \"treasury\"",
+      "defined_out": [
+        "\"treasury\"",
+        "new_treasury#0"
+      ],
+      "stack_out": [
+        "new_treasury#0",
+        "\"treasury\""
+      ]
+    },
+    "261": {
+      "op": "swap",
+      "stack_out": [
+        "\"treasury\"",
+        "new_treasury#0"
+      ]
+    },
+    "262": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "263": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "264": {
+      "op": "return",
+      "stack_out": []
+    },
+    "265": {
+      "subroutine": "cadencia.repayment_escrow.RepaymentEscrow.set_insurance[routing]",
+      "params": {},
+      "block": "set_insurance",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "new_insurance#0"
+      ],
+      "stack_out": [
+        "new_insurance#0"
+      ]
+    },
+    "268": {
+      "op": "dup",
+      "defined_out": [
+        "new_insurance#0",
+        "new_insurance#0 (copy)"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "new_insurance#0 (copy)"
+      ]
+    },
+    "269": {
+      "op": "len",
+      "defined_out": [
+        "len%0#0",
+        "new_insurance#0"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "len%0#0"
+      ]
+    },
+    "270": {
+      "op": "intc_2 // 32",
+      "defined_out": [
+        "32",
+        "len%0#0",
+        "new_insurance#0"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "len%0#0",
+        "32"
+      ]
+    },
+    "271": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "new_insurance#0"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "eq%0#0"
+      ]
+    },
+    "272": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "stack_out": [
+        "new_insurance#0"
+      ]
+    },
+    "273": {
+      "op": "txn Sender",
+      "defined_out": [
+        "new_insurance#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "tmp%0#1"
+      ]
+    },
+    "275": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "new_insurance#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "276": {
+      "op": "bytec_0 // \"admin\"",
+      "defined_out": [
+        "\"admin\"",
+        "0",
+        "new_insurance#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "tmp%0#1",
+        "0",
+        "\"admin\""
+      ]
+    },
+    "277": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "new_insurance#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "278": {
+      "error": "check self.admin exists",
+      "op": "assert // check self.admin exists",
+      "stack_out": [
+        "new_insurance#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "279": {
+      "op": "==",
+      "defined_out": [
+        "new_insurance#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "tmp%1#1"
+      ]
+    },
+    "280": {
+      "error": "only admin",
+      "op": "assert // only admin",
+      "stack_out": [
+        "new_insurance#0"
+      ]
+    },
+    "281": {
+      "op": "bytec 6 // \"insurance\"",
+      "defined_out": [
+        "\"insurance\"",
+        "new_insurance#0"
+      ],
+      "stack_out": [
+        "new_insurance#0",
+        "\"insurance\""
+      ]
+    },
+    "283": {
+      "op": "swap",
+      "stack_out": [
+        "\"insurance\"",
+        "new_insurance#0"
+      ]
+    },
+    "284": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "285": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "286": {
+      "op": "return",
+      "stack_out": []
+    },
+    "287": {
+      "subroutine": "cadencia.repayment_escrow.RepaymentEscrow.process_repayment[routing]",
+      "params": {},
+      "block": "process_repayment",
+      "stack_in": [],
+      "op": "txn GroupIndex",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "289": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "1"
+      ]
+    },
+    "290": {
+      "op": "-",
+      "defined_out": [
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "291": {
+      "op": "dup",
+      "defined_out": [
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "payment#0"
+      ]
+    },
+    "292": {
+      "op": "gtxns TypeEnum",
+      "defined_out": [
+        "gtxn_type%0#0",
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "gtxn_type%0#0"
+      ]
+    },
+    "294": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "gtxn_type%0#0",
+        "pay",
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "gtxn_type%0#0",
+        "pay"
+      ]
+    },
+    "295": {
+      "op": "==",
+      "defined_out": [
+        "gtxn_type_matches%0#0",
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "gtxn_type_matches%0#0"
+      ]
+    },
+    "296": {
+      "error": "transaction type is pay",
+      "op": "assert // transaction type is pay",
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "297": {
+      "op": "global CallerApplicationID",
+      "stack_out": [
+        "payment#0",
+        "tmp%0#0"
+      ]
+    },
+    "299": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "tmp%0#0",
+        "0"
+      ]
+    },
+    "300": {
+      "op": "bytec 7 // \"loan_mgr\"",
+      "defined_out": [
+        "\"loan_mgr\"",
+        "0",
+        "payment#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%0#0",
+        "0",
+        "\"loan_mgr\""
+      ]
+    },
+    "302": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "payment#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%0#0",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "303": {
+      "error": "check self.loan_manager_id exists",
+      "op": "assert // check self.loan_manager_id exists",
+      "stack_out": [
+        "payment#0",
+        "tmp%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "304": {
+      "op": "==",
+      "defined_out": [
+        "payment#0",
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%1#0"
+      ]
+    },
+    "305": {
+      "op": "bnz process_repayment_bool_true@3",
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "308": {
+      "op": "txn Sender",
+      "defined_out": [
+        "payment#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%2#0"
+      ]
+    },
+    "310": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "tmp%2#0",
+        "0"
+      ]
+    },
+    "311": {
+      "op": "bytec_0 // \"admin\"",
+      "defined_out": [
+        "\"admin\"",
+        "0",
+        "payment#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%2#0",
+        "0",
+        "\"admin\""
+      ]
+    },
+    "312": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%1#0",
+        "maybe_value%1#0",
+        "payment#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%2#0",
+        "maybe_value%1#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "313": {
+      "error": "check self.admin exists",
+      "op": "assert // check self.admin exists",
+      "stack_out": [
+        "payment#0",
+        "tmp%2#0",
+        "maybe_value%1#0"
+      ]
+    },
+    "314": {
+      "op": "==",
+      "defined_out": [
+        "payment#0",
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%3#0"
+      ]
+    },
+    "315": {
+      "op": "bz process_repayment_bool_false@4",
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "318": {
+      "block": "process_repayment_bool_true@3",
+      "stack_in": [
+        "payment#0"
+      ],
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "or_result%0#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "or_result%0#0"
+      ]
+    },
+    "319": {
+      "error": "unauthorized",
+      "block": "process_repayment_bool_merge@5",
+      "stack_in": [
+        "payment#0",
+        "or_result%0#0"
+      ],
+      "op": "assert // unauthorized",
+      "defined_out": [],
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "320": {
+      "op": "dupn 2",
+      "defined_out": [
+        "payment#0",
+        "payment#0 (copy)"
+      ],
+      "stack_out": [
+        "payment#0",
+        "payment#0",
+        "payment#0 (copy)"
+      ]
+    },
+    "322": {
+      "op": "gtxns Receiver",
+      "defined_out": [
+        "payment#0",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "payment#0",
+        "tmp%4#0"
+      ]
+    },
+    "324": {
+      "op": "global CurrentApplicationAddress",
+      "defined_out": [
+        "payment#0",
+        "tmp%4#0",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "payment#0",
+        "tmp%4#0",
+        "tmp%5#0"
+      ]
+    },
+    "326": {
+      "op": "==",
+      "defined_out": [
+        "payment#0",
+        "tmp%6#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "payment#0",
+        "tmp%6#0"
+      ]
+    },
+    "327": {
+      "error": "pay to escrow",
+      "op": "assert // pay to escrow",
+      "stack_out": [
+        "payment#0",
+        "payment#0"
+      ]
+    },
+    "328": {
+      "op": "gtxns Amount",
+      "defined_out": [
+        "payment#0",
+        "total#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0"
+      ]
+    },
+    "330": {
+      "op": "dup",
+      "defined_out": [
+        "payment#0",
+        "total#0",
+        "total#0 (copy)"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "total#0 (copy)"
+      ]
+    },
+    "331": {
+      "error": "zero repayment",
+      "op": "assert // zero repayment",
+      "stack_out": [
+        "payment#0",
+        "total#0"
+      ]
+    },
+    "332": {
+      "op": "dup",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "total#0 (copy)"
+      ]
+    },
+    "333": {
+      "op": "pushint 1500",
+      "defined_out": [
+        "1500",
+        "payment#0",
+        "total#0",
+        "total#0 (copy)"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "total#0 (copy)",
+        "1500"
+      ]
+    },
+    "336": {
+      "op": "*",
+      "defined_out": [
+        "payment#0",
+        "tmp%9#0",
+        "total#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "tmp%9#0"
+      ]
+    },
+    "337": {
+      "op": "intc_3 // 10000",
+      "defined_out": [
+        "10000",
+        "payment#0",
+        "tmp%9#0",
+        "total#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "tmp%9#0",
+        "10000"
+      ]
+    },
+    "338": {
+      "op": "/",
+      "defined_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0"
+      ]
+    },
+    "339": {
+      "op": "dig 1",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "total#0 (copy)"
+      ]
+    },
+    "341": {
+      "op": "pushint 500",
+      "defined_out": [
+        "500",
+        "payment#0",
+        "total#0",
+        "total#0 (copy)",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "total#0 (copy)",
+        "500"
+      ]
+    },
+    "344": {
+      "op": "*",
+      "defined_out": [
+        "payment#0",
+        "tmp%11#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "tmp%11#0"
+      ]
+    },
+    "345": {
+      "op": "intc_3 // 10000",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "tmp%11#0",
+        "10000"
+      ]
+    },
+    "346": {
+      "op": "/",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0"
+      ]
+    },
+    "347": {
+      "op": "dig 2",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "total#0 (copy)"
+      ]
+    },
+    "349": {
+      "op": "dig 2",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "total#0",
+        "total#0 (copy)",
+        "treasury_amount#0",
+        "treasury_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "total#0 (copy)",
+        "treasury_amount#0 (copy)"
+      ]
+    },
+    "351": {
+      "op": "-",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "tmp%13#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "tmp%13#0"
+      ]
+    },
+    "352": {
+      "op": "dig 1",
+      "defined_out": [
+        "insurance_amount#0",
+        "insurance_amount#0 (copy)",
+        "payment#0",
+        "tmp%13#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "tmp%13#0",
+        "insurance_amount#0 (copy)"
+      ]
+    },
+    "354": {
+      "op": "-",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "355": {
+      "op": "itxn_begin"
+    },
+    "356": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "357": {
+      "op": "bytec 5 // \"treasury\"",
+      "defined_out": [
+        "\"treasury\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0",
+        "\"treasury\""
+      ]
+    },
+    "359": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%2#0",
+        "maybe_value%2#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%2#0",
+        "maybe_exists%2#0"
+      ]
+    },
+    "360": {
+      "error": "check self.treasury exists",
+      "op": "assert // check self.treasury exists",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%2#0"
+      ]
+    },
+    "361": {
+      "op": "dig 3",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%2#0",
+        "treasury_amount#0 (copy)"
+      ]
+    },
+    "363": {
+      "op": "itxn_field Amount",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%2#0"
+      ]
+    },
+    "365": {
+      "op": "itxn_field Receiver",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "367": {
+      "op": "intc_1 // pay",
+      "defined_out": [
+        "insurance_amount#0",
+        "pay",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "pay"
+      ]
+    },
+    "368": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "370": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "371": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "373": {
+      "op": "itxn_submit"
+    },
+    "374": {
+      "op": "itxn_begin"
+    },
+    "375": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "376": {
+      "op": "bytec 6 // \"insurance\"",
+      "defined_out": [
+        "\"insurance\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0",
+        "\"insurance\""
+      ]
+    },
+    "378": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%3#0",
+        "maybe_value%3#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%3#0",
+        "maybe_exists%3#0"
+      ]
+    },
+    "379": {
+      "error": "check self.insurance exists",
+      "op": "assert // check self.insurance exists",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%3#0"
+      ]
+    },
+    "380": {
+      "op": "dig 2",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%3#0",
+        "insurance_amount#0 (copy)"
+      ]
+    },
+    "382": {
+      "op": "itxn_field Amount",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%3#0"
+      ]
+    },
+    "384": {
+      "op": "itxn_field Receiver",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "386": {
+      "op": "intc_1 // pay",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "pay"
+      ]
+    },
+    "387": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "389": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "390": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "392": {
+      "op": "itxn_submit"
+    },
+    "393": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "394": {
+      "op": "bytec 8 // \"pool_id\"",
+      "defined_out": [
+        "\"pool_id\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0",
+        "\"pool_id\""
+      ]
+    },
+    "396": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%4#0",
+        "payment#0",
+        "pool_amount#0",
+        "pool_app#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "pool_app#0",
+        "maybe_exists%4#0"
+      ]
+    },
+    "397": {
+      "error": "check self.lending_pool_id exists",
+      "op": "assert // check self.lending_pool_id exists",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "pool_app#0"
+      ]
+    },
+    "398": {
+      "op": "itxn_begin"
+    },
+    "399": {
+      "op": "app_params_get AppAddress",
+      "defined_out": [
+        "check%0#0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "value%0#0",
+        "check%0#0"
+      ]
+    },
+    "401": {
+      "error": "application exists",
+      "op": "assert // application exists",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "value%0#0"
+      ]
+    },
+    "402": {
+      "op": "dig 1",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "pool_amount#0 (copy)",
+        "total#0",
+        "treasury_amount#0",
+        "value%0#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "value%0#0",
+        "pool_amount#0 (copy)"
+      ]
+    },
+    "404": {
+      "op": "itxn_field Amount",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "value%0#0"
+      ]
+    },
+    "406": {
+      "op": "itxn_field Receiver",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "408": {
+      "op": "intc_1 // pay",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "pay"
+      ]
+    },
+    "409": {
+      "op": "itxn_field TypeEnum",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "411": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "412": {
+      "op": "itxn_field Fee",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "414": {
+      "op": "itxn_submit"
+    },
+    "415": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "416": {
+      "op": "bytec_1 // \"total_proc\"",
+      "defined_out": [
+        "\"total_proc\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0",
+        "\"total_proc\""
+      ]
+    },
+    "417": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%5#0",
+        "maybe_value%5#0",
+        "payment#0",
+        "pool_amount#0",
+        "total#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%5#0",
+        "maybe_exists%5#0"
+      ]
+    },
+    "418": {
+      "error": "check self.total_processed exists",
+      "op": "assert // check self.total_processed exists",
+      "stack_out": [
+        "payment#0",
+        "total#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%5#0"
+      ]
+    },
+    "419": {
+      "op": "uncover 4",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%5#0",
+        "total#0"
+      ]
+    },
+    "421": {
+      "op": "+",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "tmp%15#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "tmp%15#0"
+      ]
+    },
+    "422": {
+      "op": "bytec_1 // \"total_proc\"",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "tmp%15#0",
+        "\"total_proc\""
+      ]
+    },
+    "423": {
+      "op": "swap",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "\"total_proc\"",
+        "tmp%15#0"
+      ]
+    },
+    "424": {
+      "op": "app_global_put",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "425": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0"
+      ]
+    },
+    "426": {
+      "op": "bytec_2 // \"to_pool\"",
+      "defined_out": [
+        "\"to_pool\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "pool_amount#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "0",
+        "\"to_pool\""
+      ]
+    },
+    "427": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%6#0",
+        "maybe_value%6#0",
+        "payment#0",
+        "pool_amount#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%6#0",
+        "maybe_exists%6#0"
+      ]
+    },
+    "428": {
+      "error": "check self.total_to_pool exists",
+      "op": "assert // check self.total_to_pool exists",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0",
+        "maybe_value%6#0"
+      ]
+    },
+    "429": {
+      "op": "+",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "tmp%16#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "tmp%16#0"
+      ]
+    },
+    "430": {
+      "op": "bytec_2 // \"to_pool\"",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "tmp%16#0",
+        "\"to_pool\""
+      ]
+    },
+    "431": {
+      "op": "swap",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "\"to_pool\"",
+        "tmp%16#0"
+      ]
+    },
+    "432": {
+      "op": "app_global_put",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0"
+      ]
+    },
+    "433": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "0"
+      ]
+    },
+    "434": {
+      "op": "bytec_3 // \"to_treas\"",
+      "defined_out": [
+        "\"to_treas\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "0",
+        "\"to_treas\""
+      ]
+    },
+    "435": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%7#0",
+        "maybe_value%7#0",
+        "payment#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "maybe_value%7#0",
+        "maybe_exists%7#0"
+      ]
+    },
+    "436": {
+      "error": "check self.total_to_treasury exists",
+      "op": "assert // check self.total_to_treasury exists",
+      "stack_out": [
+        "payment#0",
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "maybe_value%7#0"
+      ]
+    },
+    "437": {
+      "op": "uncover 2",
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "maybe_value%7#0",
+        "treasury_amount#0"
+      ]
+    },
+    "439": {
+      "op": "+",
+      "defined_out": [
+        "insurance_amount#0",
+        "payment#0",
+        "tmp%17#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "tmp%17#0"
+      ]
+    },
+    "440": {
+      "op": "bytec_3 // \"to_treas\"",
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "tmp%17#0",
+        "\"to_treas\""
+      ]
+    },
+    "441": {
+      "op": "swap",
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "\"to_treas\"",
+        "tmp%17#0"
+      ]
+    },
+    "442": {
+      "op": "app_global_put",
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0"
+      ]
+    },
+    "443": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "0"
+      ]
+    },
+    "444": {
+      "op": "bytec 4 // \"to_insure\"",
+      "defined_out": [
+        "\"to_insure\"",
+        "0",
+        "insurance_amount#0",
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "0",
+        "\"to_insure\""
+      ]
+    },
+    "446": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "insurance_amount#0",
+        "maybe_exists%8#0",
+        "maybe_value%8#0",
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "maybe_value%8#0",
+        "maybe_exists%8#0"
+      ]
+    },
+    "447": {
+      "error": "check self.total_to_insurance exists",
+      "op": "assert // check self.total_to_insurance exists",
+      "stack_out": [
+        "payment#0",
+        "insurance_amount#0",
+        "maybe_value%8#0"
+      ]
+    },
+    "448": {
+      "op": "+",
+      "defined_out": [
+        "payment#0",
+        "tmp%18#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "tmp%18#0"
+      ]
+    },
+    "449": {
+      "op": "bytec 4 // \"to_insure\"",
+      "stack_out": [
+        "payment#0",
+        "tmp%18#0",
+        "\"to_insure\""
+      ]
+    },
+    "451": {
+      "op": "swap",
+      "stack_out": [
+        "payment#0",
+        "\"to_insure\"",
+        "tmp%18#0"
+      ]
+    },
+    "452": {
+      "op": "app_global_put",
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "453": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "payment#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "1"
+      ]
+    },
+    "454": {
+      "op": "return",
+      "stack_out": [
+        "payment#0"
+      ]
+    },
+    "455": {
+      "block": "process_repayment_bool_false@4",
+      "stack_in": [
+        "payment#0"
+      ],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "or_result%0#0"
+      ],
+      "stack_out": [
+        "payment#0",
+        "or_result%0#0"
+      ]
+    },
+    "456": {
+      "op": "b process_repayment_bool_merge@5"
+    },
+    "459": {
+      "subroutine": "cadencia.repayment_escrow.RepaymentEscrow.get_stats[routing]",
+      "params": {},
+      "block": "get_stats",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "460": {
+      "op": "bytec_1 // \"total_proc\"",
+      "defined_out": [
+        "\"total_proc\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"total_proc\""
+      ]
+    },
+    "461": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "462": {
+      "error": "check self.total_processed exists",
+      "op": "assert // check self.total_processed exists",
+      "stack_out": [
+        "maybe_value%0#0"
+      ]
+    },
+    "463": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "464": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "0"
+      ]
+    },
+    "465": {
+      "op": "bytec_2 // \"to_pool\"",
+      "defined_out": [
+        "\"to_pool\"",
+        "0",
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "0",
+        "\"to_pool\""
+      ]
+    },
+    "466": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "maybe_exists%1#0",
+        "maybe_value%1#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "maybe_value%1#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "467": {
+      "error": "check self.total_to_pool exists",
+      "op": "assert // check self.total_to_pool exists",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "maybe_value%1#0"
+      ]
+    },
+    "468": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "469": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "0"
+      ]
+    },
+    "470": {
+      "op": "bytec_3 // \"to_treas\"",
+      "defined_out": [
+        "\"to_treas\"",
+        "0",
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "0",
+        "\"to_treas\""
+      ]
+    },
+    "471": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "maybe_exists%2#0",
+        "maybe_value%2#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "maybe_value%2#0",
+        "maybe_exists%2#0"
+      ]
+    },
+    "472": {
+      "error": "check self.total_to_treasury exists",
+      "op": "assert // check self.total_to_treasury exists",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "maybe_value%2#0"
+      ]
+    },
+    "473": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ]
+    },
+    "474": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "0"
+      ]
+    },
+    "475": {
+      "op": "bytec 4 // \"to_insure\"",
+      "defined_out": [
+        "\"to_insure\"",
+        "0",
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "0",
+        "\"to_insure\""
+      ]
+    },
+    "477": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "maybe_exists%3#0",
+        "maybe_value%3#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "maybe_value%3#0",
+        "maybe_exists%3#0"
+      ]
+    },
+    "478": {
+      "error": "check self.total_to_insurance exists",
+      "op": "assert // check self.total_to_insurance exists",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "maybe_value%3#0"
+      ]
+    },
+    "479": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%3#0"
+      ]
+    },
+    "480": {
+      "op": "uncover 3",
+      "stack_out": [
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%3#0",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "482": {
+      "op": "uncover 3",
+      "stack_out": [
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%3#0",
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "484": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%1#0",
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%3#0",
+        "aggregate%head%1#0"
+      ]
+    },
+    "485": {
+      "op": "uncover 2",
+      "stack_out": [
+        "aggregate%val_as_bytes%3#0",
+        "aggregate%head%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ]
+    },
+    "487": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%2#0",
+        "aggregate%val_as_bytes%3#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%3#0",
+        "aggregate%head%2#0"
+      ]
+    },
+    "488": {
+      "op": "swap",
+      "stack_out": [
+        "aggregate%head%2#0",
+        "aggregate%val_as_bytes%3#0"
+      ]
+    },
+    "489": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%3#0"
+      ],
+      "stack_out": [
+        "aggregate%head%3#0"
+      ]
+    },
+    "490": {
+      "op": "bytec 9 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%head%3#0"
+      ],
+      "stack_out": [
+        "aggregate%head%3#0",
+        "0x151f7c75"
+      ]
+    },
+    "492": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%head%3#0"
+      ]
+    },
+    "493": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%1#0"
+      ],
+      "stack_out": [
+        "tmp%1#0"
+      ]
+    },
+    "494": {
+      "op": "log",
+      "stack_out": []
+    },
+    "495": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "496": {
+      "op": "return",
+      "stack_out": []
+    },
+    "497": {
+      "subroutine": "cadencia.repayment_escrow.RepaymentEscrow.get_split_preview[routing]",
+      "params": {},
+      "block": "get_split_preview",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "500": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "501": {
+      "op": "len",
+      "defined_out": [
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "len%0#0"
+      ]
+    },
+    "502": {
+      "op": "pushint 8",
+      "defined_out": [
+        "8",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "len%0#0",
+        "8"
+      ]
+    },
+    "504": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "505": {
+      "error": "invalid number of bytes for arc4.uint64",
+      "op": "assert // invalid number of bytes for arc4.uint64",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "506": {
+      "op": "btoi",
+      "defined_out": [
+        "amount#0"
+      ],
+      "stack_out": [
+        "amount#0"
+      ]
+    },
+    "507": {
+      "op": "dup",
+      "defined_out": [
+        "amount#0",
+        "amount#0 (copy)"
+      ],
+      "stack_out": [
+        "amount#0",
+        "amount#0 (copy)"
+      ]
+    },
+    "508": {
+      "op": "pushint 1500",
+      "defined_out": [
+        "1500",
+        "amount#0",
+        "amount#0 (copy)"
+      ],
+      "stack_out": [
+        "amount#0",
+        "amount#0 (copy)",
+        "1500"
+      ]
+    },
+    "511": {
+      "op": "*",
+      "defined_out": [
+        "amount#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "amount#0",
+        "tmp%0#1"
+      ]
+    },
+    "512": {
+      "op": "intc_3 // 10000",
+      "defined_out": [
+        "10000",
+        "amount#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "amount#0",
+        "tmp%0#1",
+        "10000"
+      ]
+    },
+    "513": {
+      "op": "/",
+      "defined_out": [
+        "amount#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "amount#0",
+        "treasury_amount#0"
+      ]
+    },
+    "514": {
+      "op": "dig 1",
+      "stack_out": [
+        "amount#0",
+        "treasury_amount#0",
+        "amount#0 (copy)"
+      ]
+    },
+    "516": {
+      "op": "pushint 500",
+      "defined_out": [
+        "500",
+        "amount#0",
+        "amount#0 (copy)",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "amount#0",
+        "treasury_amount#0",
+        "amount#0 (copy)",
+        "500"
+      ]
+    },
+    "519": {
+      "op": "*",
+      "defined_out": [
+        "amount#0",
+        "tmp%2#1",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "amount#0",
+        "treasury_amount#0",
+        "tmp%2#1"
+      ]
+    },
+    "520": {
+      "op": "intc_3 // 10000",
+      "stack_out": [
+        "amount#0",
+        "treasury_amount#0",
+        "tmp%2#1",
+        "10000"
+      ]
+    },
+    "521": {
+      "op": "/",
+      "defined_out": [
+        "amount#0",
+        "insurance_amount#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "amount#0",
+        "treasury_amount#0",
+        "insurance_amount#0"
+      ]
+    },
+    "522": {
+      "op": "uncover 2",
+      "stack_out": [
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "amount#0"
+      ]
+    },
+    "524": {
+      "op": "dig 2",
+      "defined_out": [
+        "amount#0",
+        "insurance_amount#0",
+        "treasury_amount#0",
+        "treasury_amount#0 (copy)"
+      ],
+      "stack_out": [
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "amount#0",
+        "treasury_amount#0 (copy)"
+      ]
+    },
+    "526": {
+      "op": "-",
+      "defined_out": [
+        "insurance_amount#0",
+        "tmp%4#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "tmp%4#0"
+      ]
+    },
+    "527": {
+      "op": "dig 1",
+      "defined_out": [
+        "insurance_amount#0",
+        "insurance_amount#0 (copy)",
+        "tmp%4#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "tmp%4#0",
+        "insurance_amount#0 (copy)"
+      ]
+    },
+    "529": {
+      "op": "-",
+      "defined_out": [
+        "insurance_amount#0",
+        "pool_amount#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "pool_amount#0"
+      ]
+    },
+    "530": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "insurance_amount#0",
+        "treasury_amount#0"
+      ],
+      "stack_out": [
+        "treasury_amount#0",
+        "insurance_amount#0",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "531": {
+      "op": "uncover 2",
+      "stack_out": [
+        "insurance_amount#0",
+        "aggregate%val_as_bytes%0#0",
+        "treasury_amount#0"
+      ]
+    },
+    "533": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "insurance_amount#0"
+      ],
+      "stack_out": [
+        "insurance_amount#0",
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "534": {
+      "op": "uncover 2",
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "insurance_amount#0"
+      ]
+    },
+    "536": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ]
+    },
+    "537": {
+      "op": "cover 2",
+      "stack_out": [
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%val_as_bytes%0#0",
+        "aggregate%val_as_bytes%1#0"
+      ]
+    },
+    "539": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%2#0",
+        "aggregate%head%1#0"
+      ]
+    },
+    "540": {
+      "op": "swap",
+      "stack_out": [
+        "aggregate%head%1#0",
+        "aggregate%val_as_bytes%2#0"
+      ]
+    },
+    "541": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%head%2#0"
+      ],
+      "stack_out": [
+        "aggregate%head%2#0"
+      ]
+    },
+    "542": {
+      "op": "bytec 9 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%head%2#0"
+      ],
+      "stack_out": [
+        "aggregate%head%2#0",
+        "0x151f7c75"
+      ]
+    },
+    "544": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%head%2#0"
+      ]
+    },
+    "545": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "546": {
+      "op": "log",
+      "stack_out": []
+    },
+    "547": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "548": {
+      "op": "return",
+      "stack_out": []
+    }
+  }
+}

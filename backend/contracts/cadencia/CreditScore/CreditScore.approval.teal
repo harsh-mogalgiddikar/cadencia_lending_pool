@@ -1,0 +1,647 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 1 0 32 8
+    bytecblock 0x73636f72655f "admin" "oracle" "auth_app" "total_borrowers" 0x151f7c75
+    // cadencia/credit_score.py:56
+    // class CreditScore(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@16
+    pushbytess 0x83dbd61a 0x3368f556 0x0ce7ebc0 0x7f5af016 0x7e695cc2 0x503b40b1 0x77807edf 0x205b720c 0xea631974 0x67a4d897 // method "set_authorized_app(uint64)void", method "set_oracle(address)void", method "initialize_score(address)void", method "increase_score(address,uint64)void", method "decrease_score(address,uint64)void", method "record_repayment(address,bool)void", method "increment_total_loans(address)void", method "get_score(address)uint64", method "get_record(address)(uint64,uint64,uint64,uint64,uint64,uint64)", method "has_score(address)bool"
+    txna ApplicationArgs 0
+    match set_authorized_app set_oracle initialize_score increase_score decrease_score record_repayment increment_total_loans get_score get_record has_score
+    err
+
+main_create_NoOp@16:
+    // cadencia/credit_score.py:56
+    // class CreditScore(ARC4Contract):
+    pushbytes 0x8a96980e // method "create(address,address)void"
+    txna ApplicationArgs 0
+    match create
+    err
+
+
+// cadencia.credit_score.CreditScore.create[routing]() -> void:
+create:
+    // cadencia/credit_score.py:75
+    // @arc4.abimethod(create="require")
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:78
+    // self.admin.value = admin
+    bytec_1 // "admin"
+    uncover 2
+    app_global_put
+    // cadencia/credit_score.py:79
+    // self.oracle.value = oracle
+    bytec_2 // "oracle"
+    swap
+    app_global_put
+    // cadencia/credit_score.py:80
+    // self.authorized_app.value = UInt64(0)
+    bytec_3 // "auth_app"
+    intc_1 // 0
+    app_global_put
+    // cadencia/credit_score.py:81
+    // self.total_borrowers.value = UInt64(0)
+    bytec 4 // "total_borrowers"
+    intc_1 // 0
+    app_global_put
+    // cadencia/credit_score.py:75
+    // @arc4.abimethod(create="require")
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.set_authorized_app[routing]() -> void:
+set_authorized_app:
+    // cadencia/credit_score.py:83
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // cadencia/credit_score.py:86
+    // assert Txn.sender == self.admin.value, "only admin"
+    txn Sender
+    intc_1 // 0
+    bytec_1 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // only admin
+    // cadencia/credit_score.py:87
+    // self.authorized_app.value = app_id
+    bytec_3 // "auth_app"
+    swap
+    app_global_put
+    // cadencia/credit_score.py:83
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.set_oracle[routing]() -> void:
+set_oracle:
+    // cadencia/credit_score.py:89
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:92
+    // assert Txn.sender == self.admin.value, "only admin"
+    txn Sender
+    intc_1 // 0
+    bytec_1 // "admin"
+    app_global_get_ex
+    assert // check self.admin exists
+    ==
+    assert // only admin
+    // cadencia/credit_score.py:93
+    // self.oracle.value = new_oracle
+    bytec_2 // "oracle"
+    swap
+    app_global_put
+    // cadencia/credit_score.py:89
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.initialize_score[routing]() -> void:
+initialize_score:
+    // cadencia/credit_score.py:95
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:103
+    // self._assert_authorized()
+    callsub _assert_authorized
+    // cadencia/credit_score.py:104
+    // assert borrower not in self.scores, "score already initialized"
+    bytec_0 // 0x73636f72655f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    !
+    assert // score already initialized
+    // cadencia/credit_score.py:111
+    // last_updated=arc4.UInt64(Global.round),
+    global Round
+    itob
+    // cadencia/credit_score.py:112
+    // initialized_at=arc4.UInt64(Global.round),
+    global Round
+    itob
+    // cadencia/credit_score.py:106-113
+    // record = ScoreRecord(
+    //     score=arc4.UInt64(SCORE_INITIAL),
+    //     total_loans=arc4.UInt64(0),
+    //     successful_repayments=arc4.UInt64(0),
+    //     defaults=arc4.UInt64(0),
+    //     last_updated=arc4.UInt64(Global.round),
+    //     initialized_at=arc4.UInt64(Global.round),
+    // )
+    pushbytes 0x0000000000000258000000000000000000000000000000000000000000000000
+    uncover 2
+    concat
+    swap
+    concat
+    // cadencia/credit_score.py:114
+    // self.scores[borrower] = record.copy()
+    box_put
+    // cadencia/credit_score.py:115
+    // self.total_borrowers.value += UInt64(1)
+    intc_1 // 0
+    bytec 4 // "total_borrowers"
+    app_global_get_ex
+    assert // check self.total_borrowers exists
+    intc_0 // 1
+    +
+    bytec 4 // "total_borrowers"
+    swap
+    app_global_put
+    // cadencia/credit_score.py:95
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.increase_score[routing]() -> void:
+increase_score:
+    // cadencia/credit_score.py:117
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    // cadencia/credit_score.py:123
+    // self._assert_authorized()
+    callsub _assert_authorized
+    // cadencia/credit_score.py:124
+    // assert borrower in self.scores, "score not initialized"
+    bytec_0 // 0x73636f72655f
+    uncover 2
+    concat
+    dup
+    cover 2
+    dup
+    box_len
+    bury 1
+    assert // score not initialized
+    // cadencia/credit_score.py:126
+    // record = self.scores[borrower].copy()
+    box_get
+    pop
+    dup
+    cover 2
+    // cadencia/credit_score.py:127
+    // current = record.score.native
+    intc_1 // 0
+    extract_uint64
+    // cadencia/credit_score.py:128
+    // new_score = current + delta
+    +
+    dup
+    // cadencia/credit_score.py:130-131
+    // # Clamp to max
+    // if new_score > UInt64(SCORE_MAX):
+    pushint 900
+    >
+    bz increase_score_after_if_else@3
+    // cadencia/credit_score.py:132
+    // new_score = UInt64(SCORE_MAX)
+    pushint 900
+    bury 1
+
+increase_score_after_if_else@3:
+    // cadencia/credit_score.py:134
+    // record.score = arc4.UInt64(new_score)
+    dup
+    itob
+    dig 2
+    swap
+    replace2 0
+    // cadencia/credit_score.py:135
+    // record.last_updated = arc4.UInt64(Global.round)
+    global Round
+    itob
+    replace2 32
+    // cadencia/credit_score.py:136
+    // self.scores[borrower] = record.copy()
+    dig 3
+    swap
+    box_put
+    // cadencia/credit_score.py:117
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.decrease_score[routing]() -> void:
+decrease_score:
+    // cadencia/credit_score.py:138
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 8
+    ==
+    assert // invalid number of bytes for arc4.uint64
+    btoi
+    dup
+    cover 2
+    // cadencia/credit_score.py:144
+    // self._assert_authorized()
+    callsub _assert_authorized
+    // cadencia/credit_score.py:145
+    // assert borrower in self.scores, "score not initialized"
+    bytec_0 // 0x73636f72655f
+    uncover 2
+    concat
+    dup
+    cover 2
+    dup
+    box_len
+    bury 1
+    assert // score not initialized
+    // cadencia/credit_score.py:147
+    // record = self.scores[borrower].copy()
+    box_get
+    pop
+    dup
+    cover 2
+    // cadencia/credit_score.py:148
+    // current = record.score.native
+    intc_1 // 0
+    extract_uint64
+    dup
+    cover 2
+    // cadencia/credit_score.py:150-151
+    // # Prevent underflow: if delta > current - SCORE_MIN, clamp to SCORE_MIN
+    // if delta >= current - UInt64(SCORE_MIN):
+    pushint 300
+    -
+    >=
+    bz decrease_score_else_body@3
+    // cadencia/credit_score.py:152
+    // new_score = UInt64(SCORE_MIN)
+    pushint 300
+
+decrease_score_after_if_else@4:
+    // cadencia/credit_score.py:156
+    // record.score = arc4.UInt64(new_score)
+    itob
+    dig 2
+    swap
+    replace2 0
+    // cadencia/credit_score.py:157
+    // record.last_updated = arc4.UInt64(Global.round)
+    global Round
+    itob
+    replace2 32
+    // cadencia/credit_score.py:158
+    // self.scores[borrower] = record.copy()
+    dig 3
+    swap
+    box_put
+    // cadencia/credit_score.py:138
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+decrease_score_else_body@3:
+    // cadencia/credit_score.py:154
+    // new_score = current - delta
+    dup
+    dig 4
+    -
+    b decrease_score_after_if_else@4
+
+
+// cadencia.credit_score.CreditScore.record_repayment[routing]() -> void:
+record_repayment:
+    // cadencia/credit_score.py:160
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_0 // 1
+    ==
+    assert // invalid number of bytes for arc4.bool
+    // cadencia/credit_score.py:166
+    // self._assert_authorized()
+    callsub _assert_authorized
+    // cadencia/credit_score.py:167
+    // assert borrower in self.scores, "score not initialized"
+    bytec_0 // 0x73636f72655f
+    uncover 2
+    concat
+    dup
+    cover 2
+    dup
+    box_len
+    bury 1
+    assert // score not initialized
+    // cadencia/credit_score.py:169
+    // record = self.scores[borrower].copy()
+    box_get
+    pop
+    swap
+    // cadencia/credit_score.py:170
+    // if is_successful.native:
+    intc_1 // 0
+    getbit
+    bz record_repayment_else_body@3
+    // cadencia/credit_score.py:172
+    // record.successful_repayments.native + UInt64(1)
+    dup
+    pushint 16
+    extract_uint64
+    intc_0 // 1
+    +
+    // cadencia/credit_score.py:171-173
+    // record.successful_repayments = arc4.UInt64(
+    //     record.successful_repayments.native + UInt64(1)
+    // )
+    itob
+    replace2 16
+
+record_repayment_after_if_else@4:
+    // cadencia/credit_score.py:177
+    // record.last_updated = arc4.UInt64(Global.round)
+    global Round
+    itob
+    replace2 32
+    // cadencia/credit_score.py:178
+    // self.scores[borrower] = record.copy()
+    dig 1
+    swap
+    box_put
+    // cadencia/credit_score.py:160
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+record_repayment_else_body@3:
+    // cadencia/credit_score.py:175
+    // record.defaults = arc4.UInt64(record.defaults.native + UInt64(1))
+    dup
+    pushint 24
+    extract_uint64
+    intc_0 // 1
+    +
+    itob
+    replace2 24
+    b record_repayment_after_if_else@4
+
+
+// cadencia.credit_score.CreditScore.increment_total_loans[routing]() -> void:
+increment_total_loans:
+    // cadencia/credit_score.py:180
+    // @arc4.abimethod
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:183
+    // self._assert_authorized()
+    callsub _assert_authorized
+    // cadencia/credit_score.py:184
+    // assert borrower in self.scores, "score not initialized"
+    bytec_0 // 0x73636f72655f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    assert // score not initialized
+    // cadencia/credit_score.py:186
+    // record = self.scores[borrower].copy()
+    dup
+    box_get
+    pop
+    // cadencia/credit_score.py:187
+    // record.total_loans = arc4.UInt64(record.total_loans.native + UInt64(1))
+    intc_3 // 8
+    extract_uint64
+    intc_0 // 1
+    +
+    itob
+    // cadencia/credit_score.py:187-188
+    // record.total_loans = arc4.UInt64(record.total_loans.native + UInt64(1))
+    // self.scores[borrower] = record.copy()
+    intc_3 // 8
+    swap
+    box_replace // on error: index out of bounds
+    // cadencia/credit_score.py:180
+    // @arc4.abimethod
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.get_score[routing]() -> void:
+get_score:
+    // cadencia/credit_score.py:192
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:195
+    // if borrower in self.scores:
+    bytec_0 // 0x73636f72655f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    bz get_score_after_if_else@3
+    // cadencia/credit_score.py:196
+    // return self.scores[borrower].score
+    dup
+    box_get
+    assert // check self.scores entry exists
+    extract 0 8
+
+get_score_after_inlined_cadencia.credit_score.CreditScore.get_score@4:
+    // cadencia/credit_score.py:192
+    // @arc4.abimethod(readonly=True)
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+get_score_after_if_else@3:
+    // cadencia/credit_score.py:197
+    // return arc4.UInt64(0)
+    pushbytes 0x0000000000000000
+    // cadencia/credit_score.py:192
+    // @arc4.abimethod(readonly=True)
+    b get_score_after_inlined_cadencia.credit_score.CreditScore.get_score@4
+
+
+// cadencia.credit_score.CreditScore.get_record[routing]() -> void:
+get_record:
+    // cadencia/credit_score.py:199
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:202
+    // assert borrower in self.scores, "score not initialized"
+    bytec_0 // 0x73636f72655f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    assert // score not initialized
+    // cadencia/credit_score.py:203
+    // return self.scores[borrower]
+    box_get
+    pop
+    // cadencia/credit_score.py:199
+    // @arc4.abimethod(readonly=True)
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore.has_score[routing]() -> void:
+has_score:
+    // cadencia/credit_score.py:205
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_2 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // cadencia/credit_score.py:208
+    // return arc4.Bool(borrower in self.scores)
+    bytec_0 // 0x73636f72655f
+    swap
+    concat
+    box_len
+    bury 1
+    pushbytes 0x00
+    intc_1 // 0
+    uncover 2
+    setbit
+    // cadencia/credit_score.py:205
+    // @arc4.abimethod(readonly=True)
+    bytec 5 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_0 // 1
+    return
+
+
+// cadencia.credit_score.CreditScore._assert_authorized() -> void:
+_assert_authorized:
+    // cadencia/credit_score.py:212-213
+    // @subroutine
+    // def _assert_authorized(self) -> None:
+    proto 0 0
+    // cadencia/credit_score.py:215
+    // is_oracle = Txn.sender == self.oracle.value
+    txn Sender
+    intc_1 // 0
+    bytec_2 // "oracle"
+    app_global_get_ex
+    assert // check self.oracle exists
+    ==
+    // cadencia/credit_score.py:217
+    // Global.caller_application_id != UInt64(0)
+    global CallerApplicationID
+    // cadencia/credit_score.py:217-218
+    // Global.caller_application_id != UInt64(0)
+    // and Global.caller_application_id == self.authorized_app.value
+    bz _assert_authorized_bool_false@3
+    // cadencia/credit_score.py:218
+    // and Global.caller_application_id == self.authorized_app.value
+    global CallerApplicationID
+    intc_1 // 0
+    bytec_3 // "auth_app"
+    app_global_get_ex
+    assert // check self.authorized_app exists
+    ==
+    // cadencia/credit_score.py:217-218
+    // Global.caller_application_id != UInt64(0)
+    // and Global.caller_application_id == self.authorized_app.value
+    bz _assert_authorized_bool_false@3
+    intc_0 // 1
+
+_assert_authorized_bool_merge@4:
+    // cadencia/credit_score.py:220
+    // assert is_oracle or is_authorized_app, "unauthorized"
+    frame_dig 0
+    ||
+    assert // unauthorized
+    retsub
+
+_assert_authorized_bool_false@3:
+    intc_1 // 0
+    b _assert_authorized_bool_merge@4

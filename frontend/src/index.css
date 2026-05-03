@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@300;400;450;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cadencia × Mastercard-inspired design system.
+   All colors HSL. Radii are strictly 20px / 40px / 999px.
+   No pure white. No marketing orange CTAs (orange = legal/consent only). */
+
+@layer base {
+  :root {
+    /* Foundations */
+    --canvas: 30 17% 94%;            /* #F3F0EE Canvas Cream */
+    --lifted: 30 25% 98%;            /* #FCFBFA */
+    --ink: 60 4% 8%;                 /* #141413 */
+    --ink-soft: 60 4% 18%;
+    --muted-ink: 30 6% 38%;
+    --hairline: 30 12% 86%;
+    --ghost: 30 18% 89%;             /* #E8E2DA watermark */
+    --signal: 18 88% 58%;            /* #F37338 Signal Orange — eyebrows / consent only */
+    --signal-soft: 18 88% 58%;
+
+    /* shadcn semantic mapping (Mastercard tokens) */
+    --background: var(--canvas);
+    --foreground: var(--ink);
+
+    --card: var(--lifted);
+    --card-foreground: var(--ink);
+
+    --popover: var(--lifted);
+    --popover-foreground: var(--ink);
+
+    --primary: var(--ink);
+    --primary-foreground: var(--lifted);
+
+    --secondary: var(--ghost);
+    --secondary-foreground: var(--ink);
+
+    --muted: var(--ghost);
+    --muted-foreground: var(--muted-ink);
+
+    --accent: var(--ghost);
+    --accent-foreground: var(--ink);
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 152 60% 38%;
+    --warning: 36 92% 48%;
+    --info: 215 80% 55%;
+
+    --border: var(--hairline);
+    --input: var(--hairline);
+    --ring: var(--ink);
+
+    --radius: 1.25rem; /* 20px */
+
+    --sidebar-background: var(--lifted);
+    --sidebar-foreground: var(--ink);
+    --sidebar-primary: var(--ink);
+    --sidebar-primary-foreground: var(--lifted);
+    --sidebar-accent: var(--ghost);
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border: var(--hairline);
+    --sidebar-ring: var(--ink);
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Sofia Sans', system-ui, sans-serif;
+    font-weight: 450;
+    font-feature-settings: 'ss01', 'cv11';
+    letter-spacing: -0.005em;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Sofia Sans', system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    line-height: 0.98;
+  }
+
+  ::selection { background: hsl(var(--ink)); color: hsl(var(--lifted)); }
+}
+
+@layer components {
+  /* Eyebrow with signal-orange dot */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[hsl(var(--muted-ink))];
+    font-weight: 500;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 8px; height: 8px; border-radius: 999px;
+    background: hsl(var(--signal));
+    display: inline-block;
+  }
+
+  /* Ghost watermark heading */
+  .ghost-headline {
+    color: hsl(var(--ghost));
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+
+  /* Mastercard pill button — ink */
+  .pill-ink {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300;
+    background: hsl(var(--ink));
+    color: hsl(var(--lifted));
+    will-change: transform;
+  }
+  .pill-ink:hover { background: hsl(var(--ink-soft)); }
+
+  .pill-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-300 border;
+    background: hsl(var(--lifted));
+    color: hsl(var(--ink));
+    border-color: hsl(var(--hairline));
+  }
+  .pill-ghost:hover { background: hsl(var(--canvas)); }
+
+  /* Satellite arrow — small circular CTA docked to a portrait */
+  .satellite {
+    @apply inline-flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-500;
+    background: hsl(var(--ink));
+    color: hsl(var(--lifted));
+  }
+  .satellite:hover { transform: rotate(-45deg); }
+
+  /* Mastercard card — soft, no hard shadow */
+  .mc-card {
+    @apply rounded-[20px] border bg-[hsl(var(--lifted))] p-6 transition-all duration-500;
+    border-color: hsl(var(--hairline));
+    box-shadow: 0 24px 48px -32px hsl(var(--ink) / 0.08);
+  }
+  .mc-card-lg {
+    @apply rounded-[40px] border bg-[hsl(var(--lifted))] p-8 md:p-10;
+    border-color: hsl(var(--hairline));
+    box-shadow: 0 32px 64px -40px hsl(var(--ink) / 0.10);
+  }
+
+  /* Floating top nav pill */
+  .nav-pill {
+    @apply rounded-full border;
+    background: hsl(var(--lifted) / 0.85);
+    border-color: hsl(var(--hairline));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* Status pills */
+  .status-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium;
+  }
+  .status-verified { background: hsl(var(--success) / 0.12); color: hsl(var(--success)); }
+  .status-pending  { background: hsl(var(--warning) / 0.14); color: hsl(var(--warning)); }
+  .status-rejected { background: hsl(var(--destructive) / 0.12); color: hsl(var(--destructive)); }
+  .status-active   { background: hsl(var(--info) / 0.12); color: hsl(var(--info)); }
+  .status-repaid   { background: hsl(var(--success) / 0.12); color: hsl(var(--success)); }
+
+  .mono { font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace; }
+
+  /* Hairline */
+  .hairline { border-color: hsl(var(--hairline)); }
+}
+
+@layer utilities {
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1), transform 0.9s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Marquee */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .marquee { animation: marquee 40s linear infinite; }
+
+  /* Orbital arc draw */
+  @keyframes drawArc {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+  }
+  .draw-arc { stroke-dasharray: 1000; animation: drawArc 2.4s cubic-bezier(0.7,0,0.3,1) forwards; }
+
+  /* Slow float */
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+  .floaty { animation: floaty 6s ease-in-out infinite; }
+
+  /* Spin slow */
+  @keyframes spinSlow { to { transform: rotate(360deg); } }
+  .spin-slow { animation: spinSlow 28s linear infinite; }
+
+  /* Magnetic transform helper handled in JS */
+  .magnetic { transition: transform 0.35s cubic-bezier(0.22,1,0.36,1); }
+}

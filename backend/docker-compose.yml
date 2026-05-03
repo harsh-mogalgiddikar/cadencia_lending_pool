@@ -1,0 +1,106 @@
+services:
+
+  # ── Redis — queues, nonces, sessions ──────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: cadencia-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ── API Server — Express REST on :3001 ────────────────────
+  api:
+    build: ./backend
+    container_name: cadencia-api
+    command: node api/src/server.js
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # ── Oracle Worker — single-instance blockchain signer ──────
+  oracle:
+    build: ./backend
+    container_name: cadencia-oracle
+    command: node oracle-worker/src/oracle.js
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Job Worker — notifications, cron, defaults ─────────────
+  jobs:
+    build: ./backend
+    container_name: cadencia-jobs
+    command: node job-worker/src/jobs.js
+    env_file:
+      - ./backend/.env
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Frontend DEV — Vite HMR on :5173 ──────────────────────
+  # Use: docker compose --profile dev up frontend-dev
+  frontend-dev:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    container_name: cadencia-frontend-dev
+    profiles: ["dev"]
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount source for HMR — node_modules stays in image
+      - ../frontend/src:/app/src
+      - ../frontend/public:/app/public
+      - ../frontend/index.html:/app/index.html
+      - ../frontend/.env:/app/.env
+    environment:
+      - VITE_API_URL=http://localhost:3001
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # ── Frontend PROD — nginx static on :80 ────────────────────
+  # Use: docker compose --profile prod up frontend
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: cadencia-frontend
+    profiles: ["prod"]
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  redis-data:

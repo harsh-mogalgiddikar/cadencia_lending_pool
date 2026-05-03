@@ -1,0 +1,9 @@
+[project]
+name = "cadencia-contracts"
+version = "0.1.0"
+description = "Cadencia Credit — Algorand smart contracts for MSME lending"
+requires-python = ">= 3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

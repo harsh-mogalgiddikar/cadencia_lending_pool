@@ -1,0 +1,34 @@
+{
+  "name": "cadencia-backend",
+  "version": "1.0.0",
+  "description": "Cadencia CreditFlow — Backend API, Oracle Worker, and Job Worker",
+  "private": true,
+  "scripts": {
+    "api": "node api/src/server.js",
+    "oracle": "node oracle-worker/src/oracle.js",
+    "jobs": "node job-worker/src/jobs.js",
+    "dev": "node api/src/server.js",
+    "dev:api": "node api/src/server.js",
+    "dev:oracle": "node oracle-worker/src/oracle.js",
+    "dev:jobs": "node job-worker/src/jobs.js",
+    "dev:all": "concurrently -n api,oracle,jobs -c cyan,magenta,green \"npm run api\" \"npm run oracle\" \"npm run jobs\"",
+    "start": "node api/src/server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.9",
+    "algosdk": "^3.2.0",
+    "bullmq": "^5.52.2",
+    "connect-redis": "^9.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "ioredis": "^5.6.1",
+    "tweetnacl": "^1.0.3",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
