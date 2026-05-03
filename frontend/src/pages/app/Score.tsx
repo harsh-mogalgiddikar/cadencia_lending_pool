@@ -4,6 +4,8 @@ import api from '@/lib/api';
 import type { ScoreData } from '@/lib/types';
 import { scoreTier } from '@/lib/format';
 import { Reveal } from '@/components/ui/Reveal';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 
 const FACTORS = [
   { label: 'Repayment History', pct: 35 },
@@ -48,9 +50,12 @@ export default function Score() {
                 <div className="h-16 bg-ghost rounded-full" />
               </div>
             ) : data && !data.initialized ? (
-              <div className="space-y-3">
+              <div className="space-y-4 flex flex-col items-center">
                 <p className="mono text-6xl text-muted-foreground">—</p>
-                <p className="text-sm text-muted-foreground">No on-chain score yet. Complete your first loan cycle to initialize.</p>
+                <p className="text-sm text-muted-foreground max-w-[250px]">No on-chain score yet. Complete your first loan cycle to initialize.</p>
+                <Link to="/app/borrow" className="pill-ink inline-flex items-center mt-2">
+                  Apply for your first loan <ArrowUpRight size={14} className="ml-1"/>
+                </Link>
               </div>
             ) : (
               <>

@@ -150,8 +150,9 @@ router.post('/deposit', requireAuth, async (req, res) => {
     if (!amountAlgo || isNaN(Number(amountAlgo)) || Number(amountAlgo) <= 0) {
       return res.status(400).json({ error: 'Invalid amount' });
     }
-    if (Number(amountAlgo) < 0.001 || Number(amountAlgo) > 100000) {
-      return res.status(400).json({ error: 'Amount must be between 0.001 and 100,000 ALGO' });
+    // Smart contract enforces MIN_DEPOSIT = 1_000_000 microALGO (1 ALGO)
+    if (Number(amountAlgo) < 1 || Number(amountAlgo) > 100000) {
+      return res.status(400).json({ error: 'Amount must be between 1 and 100,000 ALGO (contract minimum is 1 ALGO)' });
     }
 
     const amountMicroAlgo = Math.floor(Number(amountAlgo) * 1_000_000);
@@ -165,7 +166,7 @@ router.post('/deposit', requireAuth, async (req, res) => {
     const suggestedParams = await algod.getTransactionParams().do();
     const poolAppAddress = algosdk.getApplicationAddress(appId);
 
-    // Transaction 1: Payment from lender → pool app address
+    // Transaction 1 (idx=0): Payment from lender → pool app address
     const payTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       sender: senderAddress,
       receiver: poolAppAddress.toString(),
@@ -173,14 +174,25 @@ router.post('/deposit', requireAuth, async (req, res) => {
       suggestedParams,
     });
 
-    // Transaction 2: App call to deposit() method on LendingPool
+    // Transaction 2 (idx=1): App call to deposit() method on LendingPool
     // ARC-4 method selector for deposit(pay)void
+    // Contract uses GroupIndex-1 to find the pay txn, so pay MUST be at idx=0.
     const depositSelector = algosdk.ABIMethod.fromSignature('deposit(pay)void').getSelector();
+
+    // Fee: cover box MBR for new depositors (2500 + 400*75 bytes = 32500 microALGO)
+    // We set a flat 4000 fee to safely cover both the call fee and box costs.
+    const appCallParams = { ...suggestedParams, fee: 4000, flatFee: true };
+
+    // Box key for DepositRecord: prefix "dep_" (0x6465705f) + sender 32-byte pubkey
+    const senderPublicKey = algosdk.decodeAddress(senderAddress).publicKey;
+    const boxKey = new Uint8Array([...Buffer.from('dep_'), ...senderPublicKey]);
+
     const appCallTxn = algosdk.makeApplicationNoOpTxnFromObject({
       sender: senderAddress,
       appIndex: appId,
       appArgs: [depositSelector],
-      suggestedParams,
+      suggestedParams: appCallParams,
+      boxes: [{ appIndex: appId, name: boxKey }],
     });
 
     // Assign group ID — both txns must be signed together
@@ -217,9 +229,18 @@ router.post('/deposit/submit', requireAuth, async (req, res) => {
 
     const algod = createAlgodClient();
 
-    // Concatenate all signed txn bytes (for atomic group submission)
+    // Decode individual signed txns
     const allSignedBytes = signedTxns.map(b64 => new Uint8Array(Buffer.from(b64, 'base64')));
-    await algod.sendRawTransaction(allSignedBytes).do();
+
+    // algosdk v3: sendRawTransaction requires a single concatenated Uint8Array for atomic groups
+    const totalLength = allSignedBytes.reduce((sum, b) => sum + b.length, 0);
+    const concatenated = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const b of allSignedBytes) {
+      concatenated.set(b, offset);
+      offset += b.length;
+    }
+    await algod.sendRawTransaction(concatenated).do();
 
     // Get txId from first signed txn
     const firstDecoded = algosdk.decodeSignedTransaction(allSignedBytes[0]);
@@ -227,7 +248,7 @@ router.post('/deposit/submit', requireAuth, async (req, res) => {
 
     // Wait for confirmation
     const result = await algosdk.waitForConfirmation(algod, txId, 12);
-    const confirmedRound = result['confirmed-round'];
+    const confirmedRound = result.confirmedRound ?? result['confirmed-round'];
 
     // Write to deposits shadow table
     await supabase.from('deposits').insert({
@@ -311,12 +332,21 @@ router.post('/withdraw/submit', requireAuth, async (req, res) => {
 
     const algod = createAlgodClient();
     const allSignedBytes = signedTxns.map(b64 => new Uint8Array(Buffer.from(b64, 'base64')));
-    await algod.sendRawTransaction(allSignedBytes).do();
+
+    // algosdk v3: sendRawTransaction requires a single concatenated Uint8Array for atomic groups
+    const totalLength = allSignedBytes.reduce((sum, b) => sum + b.length, 0);
+    const concatenated = new Uint8Array(totalLength);
+    let offset = 0;
+    for (const b of allSignedBytes) {
+      concatenated.set(b, offset);
+      offset += b.length;
+    }
+    await algod.sendRawTransaction(concatenated).do();
 
     const firstDecoded = algosdk.decodeSignedTransaction(allSignedBytes[0]);
     const txId = firstDecoded.txn.txID();
     const result = await algosdk.waitForConfirmation(algod, txId, 12);
-    const confirmedRound = result['confirmed-round'];
+    const confirmedRound = result.confirmedRound ?? result['confirmed-round'];
 
     // Record withdrawal in deposits table (negative action)
     await supabase.from('deposits').insert({

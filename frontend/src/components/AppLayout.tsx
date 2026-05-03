@@ -5,10 +5,13 @@ import { useEffect, useState } from 'react';
 import { LayoutGrid, HandCoins, Banknote, Gauge, ShieldCheck, LogOut, Shield, Menu, X, ArrowLeft } from 'lucide-react';
 import { truncAddr } from '@/lib/format';
 
-const NAV = [
+const CORE_NAV = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { to: '/app/borrow',    label: 'Borrow',    icon: HandCoins },
   { to: '/app/lend',      label: 'Lend',      icon: Banknote },
+];
+
+const ACCOUNT_NAV = [
   { to: '/app/score',     label: 'Score',     icon: Gauge },
   { to: '/app/kyc',       label: 'KYC',       icon: ShieldCheck },
 ];
@@ -57,7 +60,8 @@ export default function AppLayout({ admin = false }: { admin?: boolean }) {
   if (!isAuthenticated) return <Navigate to="/" replace />;
   if (admin && !isAdmin)  return <Navigate to="/app/dashboard" replace />;
 
-  const items = admin ? ADMIN_NAV : NAV;
+  // removed items parsing since we map directly
+
 
   const handleSignOut = () => { setMobileOpen(false); signOut(); nav('/'); };
 
@@ -70,25 +74,46 @@ export default function AppLayout({ admin = false }: { admin?: boolean }) {
           <span className="text-lg font-medium tracking-tight">Cadencia</span>
         </Link>
 
-        <p className="eyebrow px-2 py-2">{admin ? 'Admin Console' : 'Workspace'}</p>
-
-        {admin && (
-          <Link
-            to="/app/dashboard"
-            className="flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground hover:bg-ghost hover:text-ink transition-all mb-1"
-          >
-            <ArrowLeft size={13}/> Back to App
-          </Link>
+        {admin ? (
+          <>
+            <p className="eyebrow px-2 py-2">Admin Console</p>
+            <Link
+              to="/app/dashboard"
+              className="flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground hover:bg-ghost hover:text-ink transition-all mb-1"
+            >
+              <ArrowLeft size={13}/> Back to App
+            </Link>
+            <nav className="flex flex-col gap-1">
+              {ADMIN_NAV.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
+                  <Icon size={16}/> {label}
+                </NavLink>
+              ))}
+            </nav>
+          </>
+        ) : (
+          <>
+            <p className="eyebrow px-2 py-2 mb-1">Core</p>
+            <nav className="flex flex-col gap-1 mb-4">
+              {CORE_NAV.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
+                  <Icon size={16}/> {label}
+                </NavLink>
+              ))}
+            </nav>
+            <p className="eyebrow px-2 py-2 mb-1">Account</p>
+            <nav className="flex flex-col gap-1">
+              {ACCOUNT_NAV.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
+                  <Icon size={16}/> {label}
+                </NavLink>
+              ))}
+            </nav>
+          </>
         )}
-
-        <nav className="flex flex-col gap-1">
-          {items.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to}
-              className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
-              <Icon size={16}/> {label}
-            </NavLink>
-          ))}
-        </nav>
 
         {!admin && isAdmin && (
           <>
@@ -134,27 +159,50 @@ export default function AppLayout({ admin = false }: { admin?: boolean }) {
           </button>
         </div>
 
-        <p className="eyebrow px-2 py-1">{admin ? 'Admin Console' : 'Workspace'}</p>
-
-        {admin && (
-          <Link
-            to="/app/dashboard"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground hover:bg-ghost hover:text-ink transition-all mb-1"
-          >
-            <ArrowLeft size={13}/> Back to App
-          </Link>
-        )}
-
-        <nav className="flex flex-col gap-1">
-          {items.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to}
+        {admin ? (
+          <>
+            <p className="eyebrow px-2 py-1">Admin Console</p>
+            <Link
+              to="/app/dashboard"
               onClick={() => setMobileOpen(false)}
-              className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
-              <Icon size={16}/> {label}
-            </NavLink>
-          ))}
-        </nav>
+              className="flex items-center gap-2 rounded-full px-4 py-2 text-xs text-muted-foreground hover:bg-ghost hover:text-ink transition-all mb-1"
+            >
+              <ArrowLeft size={13}/> Back to App
+            </Link>
+            <nav className="flex flex-col gap-1">
+              {ADMIN_NAV.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
+                  <Icon size={16}/> {label}
+                </NavLink>
+              ))}
+            </nav>
+          </>
+        ) : (
+          <>
+            <p className="eyebrow px-2 py-1 mb-1">Core</p>
+            <nav className="flex flex-col gap-1 mb-4">
+              {CORE_NAV.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
+                  <Icon size={16}/> {label}
+                </NavLink>
+              ))}
+            </nav>
+            <p className="eyebrow px-2 py-1 mb-1">Account</p>
+            <nav className="flex flex-col gap-1">
+              {ACCOUNT_NAV.map(({ to, label, icon: Icon }) => (
+                <NavLink key={to} to={to}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) => `flex items-center gap-3 rounded-full px-4 py-2.5 text-sm transition-all ${isActive ? 'bg-ink text-lifted' : 'text-muted-foreground hover:bg-ghost hover:text-ink'}`}>
+                  <Icon size={16}/> {label}
+                </NavLink>
+              ))}
+            </nav>
+          </>
+        )}
 
         {!admin && isAdmin && (
           <>

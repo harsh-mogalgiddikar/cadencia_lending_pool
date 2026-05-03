@@ -72,27 +72,35 @@ export function useAlgoSigner() {
 
     // Step 3: Sign with Pera wallet
     // Each txn in a group must be listed with its signer address.
-    // For atomic groups: peraWallet.signTransaction([[txn1, txn2]])
-    // For single txns:   peraWallet.signTransaction([[txn1]])
+    // Pera expects: signTransaction([[{txn, signers}, {txn, signers}, ...]])
+    // All txns in the group must appear in the same inner array.
     const txnGroup = decodedTxns.map(txn => ({
       txn,
       signers: [address],
     }));
 
-    let signedTxnResults: Uint8Array[];
+    let rawSignedResults: Uint8Array[];
     try {
-      signedTxnResults = await peraWallet.signTransaction([txnGroup]);
+      rawSignedResults = await peraWallet.signTransaction([txnGroup]);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      // Pera rejection is thrown as an error with "cancelled" in the message
       if (errMsg.toLowerCase().includes('cancel') || errMsg.toLowerCase().includes('rejected')) {
         throw new Error('Transaction cancelled by user');
       }
       throw new Error(`Pera signing failed: ${errMsg}`);
     }
 
+    // Pera returns one entry per txn in the group; slots signed by a logicsig
+    // or not signed by the user come back as empty Uint8Arrays (length === 0).
+    // Filter those out — only send non-empty signed bytes to the backend.
+    const nonEmptySignedResults = rawSignedResults.filter(b => b && b.length > 0);
+    if (nonEmptySignedResults.length === 0) {
+      throw new Error('Pera returned no signed transactions — was the transaction rejected?');
+    }
+    console.log(`[AlgoSigner] Pera returned ${rawSignedResults.length} results, ${nonEmptySignedResults.length} non-empty`);
+
     // Step 4: Base64-encode signed bytes safely (avoid spread stack overflow on large txns)
-    const signedTxns = signedTxnResults.map(bytes => {
+    const signedTxns = nonEmptySignedResults.map(bytes => {
       let binary = '';
       const chunkSize = 8192;
       for (let i = 0; i < bytes.length; i += chunkSize) {

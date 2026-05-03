@@ -8,7 +8,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const { address, kycStatus } = useAuth();
+  const { address, kycStatus, role } = useAuth();
   const [pool, setPool] = useState<PoolStats | null>(null);
   const [score, setScore] = useState<ScoreData | null>(null);
   const [loans, setLoans] = useState<Loan[]>([]);
@@ -85,12 +85,17 @@ export default function Dashboard() {
         <Reveal delay={50}>
           <div className="mc-card">
             <p className="eyebrow mb-3">Credit Score</p>
-            {score ? (
+            {score && score.initialized ? (
               <>
                 <p className="mono text-4xl">{score.score}</p>
                 <p className="mt-1 text-xs" style={{ color: tier?.color }}>{tier?.label}</p>
               </>
-            ) : <p className="mono text-4xl text-muted-foreground">—</p>}
+            ) : (
+              <>
+                <p className="mono text-4xl text-muted-foreground">—</p>
+                <p className="mt-1 text-xs text-muted-foreground">Not initialized</p>
+              </>
+            )}
           </div>
         </Reveal>
         <Reveal delay={100}>
@@ -144,7 +149,12 @@ export default function Dashboard() {
             <Link to="/app/borrow" className="pill-ghost">Apply for new <ArrowUpRight size={14}/></Link>
           </div>
           {loans.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-10 text-center">No loans yet. Apply on the Borrow page.</p>
+            <div className="py-12 flex flex-col items-center text-center">
+              <p className="text-muted-foreground mb-4">No activity yet — start by {role === 'lender' ? 'lending' : 'borrowing'}.</p>
+              <Link to={role === 'lender' ? '/app/lend' : '/app/borrow'} className="pill-ink">
+                {role === 'lender' ? 'Start Lending' : 'Apply for Loan'}
+              </Link>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">

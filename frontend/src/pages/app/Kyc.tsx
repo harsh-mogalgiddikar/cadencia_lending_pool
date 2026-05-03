@@ -39,12 +39,26 @@ export default function Kyc() {
       <Reveal>
         <div className="mc-card-lg max-w-2xl mx-auto text-center py-16">
           <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-success/10 text-success mb-6">
-            <Check size={32}/>
+            <ShieldCheck size={32}/>
           </div>
-          <p className="eyebrow justify-center mb-3" style={{ display: 'inline-flex' }}>Identity</p>
-          <h1 className="text-4xl mb-3">Identity <span className="italic font-light">verified</span>.</h1>
-          <span className="status-pill status-verified mb-6"><Check size={12}/> Verified · Tier {data.kyc_tier}</span>
-          <p className="text-muted-foreground">{data.business_name} · role <span className="capitalize">{data.role}</span></p>
+          <p className="eyebrow justify-center mb-3" style={{ display: 'inline-flex' }}>Onboarding Complete</p>
+          <h1 className="text-4xl mb-3">Identity <span className="italic font-light">secured</span>.</h1>
+          <p className="text-muted-foreground mb-8">{data.business_name} · Tier {data.kyc_tier} <span className="capitalize">{data.role}</span></p>
+          
+          <div className="flex flex-col items-center gap-3 max-w-sm mx-auto bg-canvas rounded-2xl p-6">
+            {data.role === 'borrower' || data.role === 'both' ? (
+              <div className="flex items-center gap-3 w-full">
+                <Check size={16} className="text-success shrink-0"/>
+                <span className="text-sm text-left flex-1">You are now eligible to borrow up to <span className="mono">50 ALGO</span>.</span>
+              </div>
+            ) : null}
+            {data.role === 'lender' || data.role === 'both' ? (
+              <div className="flex items-center gap-3 w-full">
+                <Check size={16} className="text-success shrink-0"/>
+                <span className="text-sm text-left flex-1">You can now deposit ALGO to earn pool yield.</span>
+              </div>
+            ) : null}
+          </div>
         </div>
       </Reveal>
     );

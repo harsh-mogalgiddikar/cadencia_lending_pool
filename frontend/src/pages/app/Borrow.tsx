@@ -261,13 +261,25 @@ export default function Borrow() {
                   <div className="h-px bg-hairline my-2"/>
                   <div className="flex justify-between font-medium"><span>Total Repayment</span><span className="mono">◎ {total.toFixed(4)}</span></div>
                 </div>
+                
+                <p className="text-xs text-muted-foreground mb-4 text-center">
+                  Your current credit score may affect approval terms and limits.
+                </p>
+                
                 <button
                   onClick={apply}
                   disabled={!kycReady || submitting || (!!active && active.status !== 'rejected' && active.status !== 'repaid')}
                   className="pill-ink w-full justify-center disabled:opacity-40"
                   id="btn-apply-loan"
                 >
-                  {submitting ? 'Submitting…' : 'Apply for loan'} <ArrowUpRight size={14}/>
+                  {submitting ? (
+                    <span className="flex items-center gap-2">
+                      <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"/>
+                      Submitting…
+                    </span>
+                  ) : (
+                    <>Apply for loan <ArrowUpRight size={14}/></>
+                  )}
                 </button>
                 {!!active && active.status !== 'rejected' && active.status !== 'repaid' && (
                   <p className="mt-2 text-xs text-center text-muted-foreground">You have an existing active or pending loan</p>
@@ -286,19 +298,26 @@ export default function Borrow() {
             ) : (
               <ul className="space-y-3">
                 {loans.map(l => (
-                  <li key={l.id} className="flex items-center justify-between rounded-[20px] border hairline p-4">
-                    <div>
-                      <p className="mono text-sm">◎ {fmtAlgo(l.amount_algo)} · {l.tenure_days}d</p>
-                      <p className="text-xs text-muted-foreground">{relTime(l.created_at)}</p>
+                  <li key={l.id} className="flex flex-col gap-2 rounded-[20px] border hairline p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="mono text-sm">◎ {fmtAlgo(l.amount_algo)} · {l.tenure_days}d</p>
+                        <p className="text-xs text-muted-foreground">{relTime(l.created_at)}</p>
+                      </div>
+                      <span className={`status-pill ${
+                        l.status === 'repaid'    ? 'status-repaid'   :
+                        l.status === 'active'    ? 'status-active'   :
+                        l.status === 'approved'  ? 'status-verified' :
+                        l.status === 'pending'   ? 'status-pending'  :
+                        l.status === 'rejected'  ? 'status-rejected' :
+                        l.status === 'defaulted' ? 'status-rejected' : 'status-pending'
+                      }`}>{l.status}</span>
                     </div>
-                    <span className={`status-pill ${
-                      l.status === 'repaid'    ? 'status-repaid'   :
-                      l.status === 'active'    ? 'status-active'   :
-                      l.status === 'approved'  ? 'status-verified' :
-                      l.status === 'pending'   ? 'status-pending'  :
-                      l.status === 'rejected'  ? 'status-rejected' :
-                      l.status === 'defaulted' ? 'status-rejected' : 'status-pending'
-                    }`}>{l.status}</span>
+                    {l.status === 'rejected' && (
+                      <div className="mt-2 text-xs text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
+                        {(l as any).rejection_reason || 'Rejected due to low credit score or pool limits'}
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
