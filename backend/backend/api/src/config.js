@@ -3,6 +3,7 @@
  * Used by all 3 backend processes (api, oracle-worker, job-worker).
  */
 
+const crypto = require('crypto');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 
 const config = {
@@ -47,14 +48,14 @@ const config = {
   session: {
     secret: (function () {
       const s = process.env.SESSION_SECRET;
-      if (!s || s === 'dev-secret-change-me') {
-        if (process.env.NODE_ENV !== 'test') {
-          throw new Error(
-            '[config] SESSION_SECRET is not set or is the insecure default. ' +
-            'Set a strong random value in .env before starting the server.'
-          );
-        }
-        return 'dev-secret-change-me';
+      if (!s || s === 'dev-secret-change-me' || s === 'change-me-to-a-strong-random-64-char-string') {
+        const generated = crypto.randomBytes(32).toString('hex');
+        console.warn(
+          '[config] WARNING: SESSION_SECRET is not set or is the insecure default. ' +
+          'Sessions will not persist across restarts. ' +
+          'Set SESSION_SECRET in your environment variables.'
+        );
+        return generated;
       }
       return s;
     })(),
