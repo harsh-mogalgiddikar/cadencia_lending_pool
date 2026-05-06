@@ -34,37 +34,36 @@ function txnToBase64(txn) {
 // ── GET /api/pool/stats ───────────────────────────────────────────────────────
 
 /**
- * Public endpoint — returns pool statistics from on-chain global state.
+ * Public endpoint — returns pool statistics calculated from Supabase.
+ * Since deposits go to the platform wallet (not the smart contract),
+ * we track all figures in the deposits shadow table and loan_applications.
  */
 router.get('/stats', async (req, res) => {
   try {
-    const appId = config.contracts.lendingPoolAppId;
+    // Total liquidity = net deposits (deposits - withdrawals) in microALGO
+    const { data: depositRows } = await supabase
+      .from('deposits')
+      .select('amount_algo, action');
 
-    if (!appId || appId === 0) {
-      return res.json({
-        totalLiquidity: 0,
-        outstandingLoans: 0,
-        utilizationBps: 0,
-        totalDepositors: 0,
-        message: 'Pool not deployed yet',
-      });
-    }
+    const totalLiquidity = Math.max(0, (depositRows || []).reduce((acc, d) => {
+      return acc + (d.action === 'deposit' ? d.amount_algo : -d.amount_algo);
+    }, 0));
 
-    const algod = createAlgodClient();
-    const appInfo = await algod.getApplicationByID(appId).do();
-    const globalState = appInfo['params']['global-state'] || [];
+    // Outstanding loans = active/approved loans
+    const { data: loanRows } = await supabase
+      .from('loan_applications')
+      .select('amount_algo')
+      .in('status', ['active', 'approved']);
 
-    // Decode global state values
-    const state = {};
-    for (const kv of globalState) {
-      const key = Buffer.from(kv.key, 'base64').toString();
-      state[key] = kv.value.uint || 0;
-    }
+    const outstandingLoans = (loanRows || []).reduce((acc, l) => acc + l.amount_algo, 0);
 
-    const totalLiquidity = state['total_liq'] || 0;
-    const outstandingLoans = state['out_loans'] || 0;
-    const totalShares = state['total_shares'] || 0;
-    const totalDepositors = state['depositors'] || 0;
+    // Unique depositors
+    const { data: depositorRows } = await supabase
+      .from('deposits')
+      .select('wallet_address')
+      .eq('action', 'deposit');
+
+    const totalDepositors = new Set((depositorRows || []).map(d => d.wallet_address)).size;
 
     const utilizationBps = totalLiquidity > 0
       ? Math.floor((outstandingLoans * 10000) / totalLiquidity)
@@ -73,9 +72,9 @@ router.get('/stats', async (req, res) => {
     res.json({
       totalLiquidity,
       outstandingLoans,
-      availableLiquidity: totalLiquidity - outstandingLoans,
+      availableLiquidity: Math.max(0, totalLiquidity - outstandingLoans),
       utilizationBps,
-      totalShares,
+      totalShares: 0,
       totalDepositors,
     });
   } catch (err) {
@@ -87,43 +86,54 @@ router.get('/stats', async (req, res) => {
 // ── GET /api/pool/score/:address ──────────────────────────────────────────────
 
 /**
- * Read on-chain credit score from the CreditScore contract's box storage.
+ * Credit score — calculated from Supabase loan history.
+ *
+ * Formula:
+ *   Base 700 (for any KYC-verified user)
+ *   +50  per successful repayment
+ *   -200 per default
+ *   Clamped to [0, 1000]
+ *
+ * Falls back gracefully if user has no loan history.
  */
 router.get('/score/:address', async (req, res) => {
   try {
     const { address } = req.params;
 
-    // Validate Algorand address format (58-char base32 with checksum)
     if (!algosdk.isValidAddress(address)) {
       return res.status(400).json({ error: 'Invalid Algorand address format' });
     }
 
-    const appId = config.contracts.creditScoreAppId;
-    if (!appId || appId === 0) {
-      return res.json({ score: 0, message: 'CreditScore contract not deployed' });
+    // Fetch loan history from Supabase
+    const { data: loans } = await supabase
+      .from('loan_applications')
+      .select('status')
+      .eq('wallet_address', address);
+
+    const totalLoans = (loans || []).length;
+    const successfulRepayments = (loans || []).filter(l => l.status === 'repaid').length;
+    const defaults = (loans || []).filter(l => l.status === 'defaulted').length;
+
+    if (totalLoans === 0) {
+      // No loan history — check if KYC verified to give base score
+      const { data: user } = await supabase
+        .from('users')
+        .select('kyc_status')
+        .eq('wallet_address', address)
+        .single();
+
+      if (!user || user.kyc_status !== 'verified') {
+        return res.json({ score: 0, initialized: false, totalLoans: 0, successfulRepayments: 0, defaults: 0 });
+      }
+      // KYC verified, no loans yet — return base score
+      return res.json({ score: 700, initialized: true, totalLoans: 0, successfulRepayments: 0, defaults: 0 });
     }
 
-    const algod = createAlgodClient();
+    // Score formula: 700 base + 50 per repayment - 200 per default, clamped to [0, 1000]
+    const score = Math.max(0, Math.min(1000, 700 + (successfulRepayments * 50) - (defaults * 200)));
 
-    // Box key: "score_" + 32-byte public key
-    const publicKey = algosdk.decodeAddress(address).publicKey;
-    const boxName = Buffer.concat([Buffer.from('score_'), publicKey]);
-
-    try {
-      const boxResponse = await algod.getApplicationBoxByName(appId, boxName).do();
-      const boxValue = boxResponse.value;
-
-      // Decode ScoreRecord struct (all UInt64, 6 fields × 8 bytes = 48 bytes)
-      const score = Number(BigInt('0x' + Buffer.from(boxValue.slice(0, 8)).toString('hex')));
-      const totalLoans = Number(BigInt('0x' + Buffer.from(boxValue.slice(8, 16)).toString('hex')));
-      const successfulRepayments = Number(BigInt('0x' + Buffer.from(boxValue.slice(16, 24)).toString('hex')));
-      const defaults = Number(BigInt('0x' + Buffer.from(boxValue.slice(24, 32)).toString('hex')));
-
-      res.json({ score, totalLoans, successfulRepayments, defaults, initialized: true });
-    } catch (boxErr) {
-      // Box not found — score not initialized
-      res.json({ score: 0, initialized: false });
-    }
+    console.log(`[Score] ${address}: score=${score} loans=${totalLoans} repaid=${successfulRepayments} defaults=${defaults}`);
+    res.json({ score, initialized: true, totalLoans, successfulRepayments, defaults });
   } catch (err) {
     console.error('[Score] Error:', err);
     res.status(500).json({ error: 'Failed to fetch credit score' });
@@ -133,14 +143,12 @@ router.get('/score/:address', async (req, res) => {
 // ── POST /api/pool/deposit ────────────────────────────────────────────────────
 
 /**
- * Build an unsigned ALGO payment transaction from the lender's wallet
- * to the LendingPool app account. Returns base64-encoded msgpack for Pera signing.
+ * Build a single unsigned ALGO payment from the lender directly to the
+ * platform wallet (CFZRI425...). No smart contract call is needed — the
+ * platform wallet is the same oracle wallet that disburses loans, so all
+ * capital flows through one address.
  *
- * For ARC-4 pools, a deposit is typically:
- *   [pay: lender → pool_app_addr, app_call: deposit() on LendingPool]
- * For a simple payment-only pool (MVP), just a payment to the app address.
- *
- * The backend returns both transaction types and the frontend signs them atomically.
+ * Returns a single base64-encoded msgpack for Pera to sign.
  */
 router.post('/deposit', requireAuth, async (req, res) => {
   try {
@@ -150,59 +158,37 @@ router.post('/deposit', requireAuth, async (req, res) => {
     if (!amountAlgo || isNaN(Number(amountAlgo)) || Number(amountAlgo) <= 0) {
       return res.status(400).json({ error: 'Invalid amount' });
     }
-    // Smart contract enforces MIN_DEPOSIT = 1_000_000 microALGO (1 ALGO)
     if (Number(amountAlgo) < 1 || Number(amountAlgo) > 100000) {
-      return res.status(400).json({ error: 'Amount must be between 1 and 100,000 ALGO (contract minimum is 1 ALGO)' });
+      return res.status(400).json({ error: 'Amount must be between 1 and 100,000 ALGO' });
+    }
+
+    // Validate platform wallet is configured
+    const platformWallet = config.platformWallet;
+    if (!platformWallet) {
+      console.error('[Pool] PLATFORM_WALLET is not set in .env');
+      return res.status(503).json({ error: 'Platform wallet not configured — contact support' });
     }
 
     const amountMicroAlgo = Math.floor(Number(amountAlgo) * 1_000_000);
-    const appId = config.contracts.lendingPoolAppId;
-
-    if (!appId || appId === 0) {
-      return res.status(503).json({ error: 'Lending pool not deployed' });
-    }
 
     const algod = createAlgodClient();
     const suggestedParams = await algod.getTransactionParams().do();
-    const poolAppAddress = algosdk.getApplicationAddress(appId);
 
-    // Transaction 1 (idx=0): Payment from lender → pool app address
+    // Single payment: lender → platform wallet (CFZRI425...)
     const payTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       sender: senderAddress,
-      receiver: poolAppAddress.toString(),
+      receiver: platformWallet,
       amount: amountMicroAlgo,
+      note: new TextEncoder().encode(`deposit:${senderAddress.slice(0, 8)}`),
       suggestedParams,
     });
 
-    // Transaction 2 (idx=1): App call to deposit() method on LendingPool
-    // ARC-4 method selector for deposit(pay)void
-    // Contract uses GroupIndex-1 to find the pay txn, so pay MUST be at idx=0.
-    const depositSelector = algosdk.ABIMethod.fromSignature('deposit(pay)void').getSelector();
-
-    // Fee: cover box MBR for new depositors (2500 + 400*75 bytes = 32500 microALGO)
-    // We set a flat 4000 fee to safely cover both the call fee and box costs.
-    const appCallParams = { ...suggestedParams, fee: 4000, flatFee: true };
-
-    // Box key for DepositRecord: prefix "dep_" (0x6465705f) + sender 32-byte pubkey
-    const senderPublicKey = algosdk.decodeAddress(senderAddress).publicKey;
-    const boxKey = new Uint8Array([...Buffer.from('dep_'), ...senderPublicKey]);
-
-    const appCallTxn = algosdk.makeApplicationNoOpTxnFromObject({
-      sender: senderAddress,
-      appIndex: appId,
-      appArgs: [depositSelector],
-      suggestedParams: appCallParams,
-      boxes: [{ appIndex: appId, name: boxKey }],
-    });
-
-    // Assign group ID — both txns must be signed together
-    const grouped = algosdk.assignGroupID([payTxn, appCallTxn]);
+    console.log(`[Pool] Deposit txn built: ${amountMicroAlgo} microALGO from ${senderAddress} → ${platformWallet}`);
 
     res.json({
-      unsignedTxns: grouped.map(txnToBase64),
+      unsignedTxns: [txnToBase64(payTxn)],
       amountMicroAlgo,
-      poolAppAddress: poolAppAddress.toString(),
-      appId,
+      receiver: platformWallet,
     });
   } catch (err) {
     console.error('[Pool] Deposit build error:', err);
@@ -248,7 +234,8 @@ router.post('/deposit/submit', requireAuth, async (req, res) => {
 
     // Wait for confirmation
     const result = await algosdk.waitForConfirmation(algod, txId, 12);
-    const confirmedRound = result.confirmedRound ?? result['confirmed-round'];
+    // algosdk v3 returns confirmed-round as BigInt — convert to Number for JSON serialization
+    const confirmedRound = Number(result.confirmedRound ?? result['confirmed-round']);
 
     // Write to deposits shadow table
     await supabase.from('deposits').insert({
@@ -272,12 +259,15 @@ router.post('/deposit/submit', requireAuth, async (req, res) => {
 // ── POST /api/pool/withdraw ───────────────────────────────────────────────────
 
 /**
- * Build an unsigned app call transaction to withdraw from the LendingPool.
- * ARC-4 method: withdraw(uint64)void — burns LP shares, returns ALGO.
+ * Withdrawal — oracle wallet (platform wallet) sends ALGO directly to the user.
+ *
+ * No Pera signing needed from the user side. The user is already authenticated
+ * via server session, and their deposit balance is tracked in Supabase.
+ * The oracle wallet (CFZRI425…) signs and submits the payment.
  */
 router.post('/withdraw', requireAuth, async (req, res) => {
   try {
-    const senderAddress = req.session.address;
+    const address = req.session.address;
     const { amountAlgo } = req.body;
 
     if (!amountAlgo || isNaN(Number(amountAlgo)) || Number(amountAlgo) <= 0) {
@@ -285,73 +275,51 @@ router.post('/withdraw', requireAuth, async (req, res) => {
     }
 
     const amountMicroAlgo = Math.floor(Number(amountAlgo) * 1_000_000);
-    const appId = config.contracts.lendingPoolAppId;
 
-    if (!appId || appId === 0) {
-      return res.status(503).json({ error: 'Lending pool not deployed' });
+    // Check user's net deposit balance from Supabase
+    const { data: deposits } = await supabase
+      .from('deposits')
+      .select('amount_algo, action')
+      .eq('wallet_address', address);
+
+    const netBalance = (deposits || []).reduce((acc, d) => {
+      return acc + (d.action === 'deposit' ? d.amount_algo : -d.amount_algo);
+    }, 0);
+
+    if (amountMicroAlgo > netBalance) {
+      return res.status(400).json({
+        error: `Insufficient balance. Available: ${(netBalance / 1_000_000).toFixed(4)} ALGO`,
+      });
     }
 
+    // Oracle wallet signs and sends payment to user
+    const oracleMnemonic = config.oracle.mnemonic;
+    if (!oracleMnemonic) {
+      return res.status(503).json({ error: 'Oracle wallet not configured' });
+    }
+
+    const oracleAccount = algosdk.mnemonicToSecretKey(oracleMnemonic);
     const algod = createAlgodClient();
     const suggestedParams = await algod.getTransactionParams().do();
 
-    // ARC-4 method selector for withdraw(uint64)void
-    const withdrawSelector = algosdk.ABIMethod.fromSignature('withdraw(uint64)void').getSelector();
-    const amountArg = algosdk.encodeUint64(amountMicroAlgo);
-
-    const appCallTxn = algosdk.makeApplicationNoOpTxnFromObject({
-      sender: senderAddress,
-      appIndex: appId,
-      appArgs: [withdrawSelector, amountArg],
+    const payTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      sender: oracleAccount.addr.toString(),
+      receiver: address,
+      amount: amountMicroAlgo,
+      note: new TextEncoder().encode(`withdraw:${address.slice(0, 8)}`),
       suggestedParams,
     });
 
-    res.json({
-      unsignedTxns: [txnToBase64(appCallTxn)],
-      amountMicroAlgo,
-      appId,
-    });
-  } catch (err) {
-    console.error('[Pool] Withdraw build error:', err);
-    res.status(500).json({ error: 'Failed to build withdraw transaction' });
-  }
-});
-
-// ── POST /api/pool/withdraw/submit ────────────────────────────────────────────
-
-/**
- * Receive signed withdraw transaction, submit to Algorand, record to DB.
- */
-router.post('/withdraw/submit', requireAuth, async (req, res) => {
-  try {
-    const address = req.session.address;
-    const { signedTxns, amountMicroAlgo } = req.body;
-
-    if (!signedTxns || !Array.isArray(signedTxns) || signedTxns.length === 0) {
-      return res.status(400).json({ error: 'signedTxns array required' });
-    }
-
-    const algod = createAlgodClient();
-    const allSignedBytes = signedTxns.map(b64 => new Uint8Array(Buffer.from(b64, 'base64')));
-
-    // algosdk v3: sendRawTransaction requires a single concatenated Uint8Array for atomic groups
-    const totalLength = allSignedBytes.reduce((sum, b) => sum + b.length, 0);
-    const concatenated = new Uint8Array(totalLength);
-    let offset = 0;
-    for (const b of allSignedBytes) {
-      concatenated.set(b, offset);
-      offset += b.length;
-    }
-    await algod.sendRawTransaction(concatenated).do();
-
-    const firstDecoded = algosdk.decodeSignedTransaction(allSignedBytes[0]);
-    const txId = firstDecoded.txn.txID();
+    const signedTxn = payTxn.signTxn(oracleAccount.sk);
+    await algod.sendRawTransaction(signedTxn).do();
+    const txId = payTxn.txID();
     const result = await algosdk.waitForConfirmation(algod, txId, 12);
-    const confirmedRound = result.confirmedRound ?? result['confirmed-round'];
+    const confirmedRound = Number(result['confirmed-round']);
 
-    // Record withdrawal in deposits table (negative action)
+    // Record withdrawal in deposits table
     await supabase.from('deposits').insert({
       wallet_address: address,
-      amount_algo: amountMicroAlgo || 0,
+      amount_algo: amountMicroAlgo,
       shares: 0,
       tx_id: txId,
       action: 'withdraw',

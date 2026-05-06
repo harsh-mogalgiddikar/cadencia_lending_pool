@@ -84,10 +84,25 @@ export function useAlgoSigner() {
       rawSignedResults = await peraWallet.signTransaction([txnGroup]);
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : String(err);
-      if (errMsg.toLowerCase().includes('cancel') || errMsg.toLowerCase().includes('rejected')) {
+
+      // Pera session was lost on page refresh — try to restore and retry once
+      if (errMsg.toLowerCase().includes('not initialized') || errMsg.toLowerCase().includes('not connected')) {
+        try {
+          console.log('[AlgoSigner] Pera session lost — attempting reconnect…');
+          await peraWallet.reconnectSession();
+          rawSignedResults = await peraWallet.signTransaction([txnGroup]);
+        } catch (reconnErr: unknown) {
+          const reconnMsg = reconnErr instanceof Error ? reconnErr.message : String(reconnErr);
+          if (reconnMsg.toLowerCase().includes('cancel') || reconnMsg.toLowerCase().includes('rejected')) {
+            throw new Error('Transaction cancelled by user');
+          }
+          throw new Error('Pera session expired — please click Sign Out and reconnect your wallet');
+        }
+      } else if (errMsg.toLowerCase().includes('cancel') || errMsg.toLowerCase().includes('rejected')) {
         throw new Error('Transaction cancelled by user');
+      } else {
+        throw new Error(`Pera signing failed: ${errMsg}`);
       }
-      throw new Error(`Pera signing failed: ${errMsg}`);
     }
 
     // Pera returns one entry per txn in the group; slots signed by a logicsig

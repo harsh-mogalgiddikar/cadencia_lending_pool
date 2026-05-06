@@ -49,15 +49,27 @@ export default function Lend() {
     const toastId = toast.loading(
       tab === 'deposit'
         ? `Preparing deposit of ◎ ${amount} ALGO — Pera will open to sign…`
-        : `Preparing withdrawal — Pera will open to sign…`
+        : `Preparing withdrawal of ◎ ${amount} ALGO…`
     );
 
     try {
-      const { txId } = await buildAndSign({
-        buildUrl:  tab === 'deposit' ? '/api/pool/deposit'  : '/api/pool/withdraw',
-        submitUrl: tab === 'deposit' ? '/api/pool/deposit/submit' : '/api/pool/withdraw/submit',
-        buildBody: { amountAlgo: amount },
-      });
+      let txId: string;
+
+      if (tab === 'deposit') {
+        // Deposit: user signs a payment to the platform wallet via Pera
+        const result = await buildAndSign({
+          buildUrl:  '/api/pool/deposit',
+          submitUrl: '/api/pool/deposit/submit',
+          buildBody: { amountAlgo: amount },
+        });
+        txId = result.txId;
+      } else {
+        // Withdrawal: oracle (platform wallet) sends ALGO directly to user.
+        // No Pera signing needed — user is authenticated via server session.
+        const res = await api.post('/api/pool/withdraw', { amountAlgo: amount });
+        if (!res.data?.txId) throw new Error('Withdrawal failed — no txId returned');
+        txId = res.data.txId;
+      }
 
       toast.dismiss(toastId);
       toast.success(`${tab === 'deposit' ? 'Deposit' : 'Withdrawal'} confirmed on-chain!`);
@@ -193,8 +205,8 @@ export default function Lend() {
               <div className="flex-1 flex flex-col">
                 <p className="text-xs text-muted-foreground mb-5">
                   {tab === 'deposit'
-                    ? 'Pera wallet will open to sign the on-chain deposit transaction. Funds go directly to the lending pool smart contract.'
-                    : 'Pera wallet will open to sign the withdrawal app call. LP shares are burned and ALGO is returned to your wallet.'}
+                    ? 'Pera wallet will open to sign the deposit transaction. Funds go directly to the Cadencia platform wallet.'
+                    : 'Withdrawal is processed instantly by the platform. ALGO is sent from the platform wallet directly to your Algorand address.'}
                 </p>
 
                 <div className="mb-2 flex items-center justify-between">

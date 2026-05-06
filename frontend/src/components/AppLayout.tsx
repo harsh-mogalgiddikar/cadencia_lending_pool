@@ -4,6 +4,7 @@ import api from '@/lib/api';
 import { useEffect, useState } from 'react';
 import { LayoutGrid, HandCoins, Banknote, Gauge, ShieldCheck, LogOut, Shield, Menu, X, ArrowLeft } from 'lucide-react';
 import { truncAddr } from '@/lib/format';
+import { peraWallet } from '@/lib/peraWallet';
 
 const CORE_NAV = [
   { to: '/app/dashboard', label: 'Dashboard', icon: LayoutGrid },
@@ -30,8 +31,17 @@ export default function AppLayout({ admin = false }: { admin?: boolean }) {
   // 1. Verify session is still valid with the backend
   // 2. Hydrate isAdmin from the server (not localStorage)
   // 3. Hydrate kycStatus from the real KYC endpoint
+  // 4. Restore Pera WebSocket session (lost on page refresh)
   useEffect(() => {
     if (!address) return;
+
+    // Silently restore Pera's WebSocket session so signing works after page refresh.
+    // auth.ts persists address in localStorage but Pera's connector is reset on reload.
+    peraWallet.reconnectSession().catch(() => {
+      // No saved session — user will need to re-connect wallet if they refresh
+      // Don't sign out here since server session may still be valid
+    });
+
     api.get('/api/auth/me')
       .then(({ data }) => {
         if (!data.authenticated) {

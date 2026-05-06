@@ -22,8 +22,17 @@ const app = express();
 
 // ── Middleware ──
 
+// Support comma-separated list of allowed origins: FRONTEND_URLS=https://x.vercel.app,http://localhost:8080
+const allowedOrigins = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:8080')
+  .split(',').map(o => o.trim());
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+  origin: (origin, cb) => {
+    // Allow requests with no origin (curl, Postman, same-origin)
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    cb(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
 }));
 
@@ -56,8 +65,8 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: config.nodeEnv === 'production',
-    sameSite: 'lax',
+    secure: config.nodeEnv === 'production',          // HTTPS only in prod
+    sameSite: config.nodeEnv === 'production' ? 'none' : 'lax', // 'none' required for cross-origin (Vercel → Railway)
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   },
 }));

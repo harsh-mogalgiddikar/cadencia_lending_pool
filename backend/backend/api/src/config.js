@@ -68,6 +68,9 @@ const config = {
   // ── Server ──
   port: parseInt(process.env.PORT || '3001'),
   nodeEnv: process.env.NODE_ENV || 'development',
+
+  // ── Platform Wallet — receives all loan repayments ──
+  platformWallet: process.env.PLATFORM_WALLET || '',
 };
 
 module.exports = config;

@@ -175,9 +175,11 @@ router.post('/repay/:id', requireAuth, async (req, res) => {
       return res.status(400).json({ error: `Loan status is '${loan.status}' — only active loans can be repaid` });
     }
 
-    const appId = config.contracts.lendingPoolAppId;
-    if (!appId || appId === 0) {
-      return res.status(503).json({ error: 'Lending pool not deployed' });
+    // Validate platform wallet is configured
+    const platformWallet = config.platformWallet;
+    if (!platformWallet) {
+      console.error('[Loans] PLATFORM_WALLET is not set in .env');
+      return res.status(503).json({ error: 'Platform wallet not configured — contact support' });
     }
 
     // Calculate total repayment amount
@@ -189,25 +191,24 @@ router.post('/repay/:id', requireAuth, async (req, res) => {
 
     const algod = createAlgodClient();
     const suggestedParams = await algod.getTransactionParams().do();
-    const poolAppAddress = algosdk.getApplicationAddress(appId);
 
-    // Payment: borrower → pool app address
+    // Payment: borrower → platform wallet (CFZRI425...)
     const payTxn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
       sender: address,
-      receiver: poolAppAddress.toString(),
+      receiver: platformWallet,
       amount: repaymentMicroAlgo,
       note: new TextEncoder().encode(`repay:${id}`), // Tag for indexer queries
       suggestedParams,
     });
 
-    console.log(`[Loans] Repay txn built: loan=${id} amount=${repaymentMicroAlgo} microALGO`);
+    console.log(`[Loans] Repay txn built: loan=${id} amount=${repaymentMicroAlgo} microALGO → ${platformWallet}`);
 
     res.json({
       unsignedTxns: [txnToBase64(payTxn)],
       repaymentMicroAlgo,
       repaymentAlgo: repaymentMicroAlgo / 1_000_000,
       loanId: id,
-      poolAppAddress: poolAppAddress.toString(),
+      receiver: platformWallet,
     });
   } catch (err) {
     console.error('[Loans] Repay build error:', err);
@@ -254,13 +255,24 @@ router.post('/repay/:id/submit', requireAuth, async (req, res) => {
     const firstDecoded = algosdk.decodeSignedTransaction(allSignedBytes[0]);
     const txId = firstDecoded.txn.txID();
     const result = await algosdk.waitForConfirmation(algod, txId, 12);
-    const confirmedRound = result['confirmed-round'];
+    // algosdk v3 returns confirmed-round as BigInt — convert to Number for JSON
+    const confirmedRound = Number(result['confirmed-round']);
 
-    // Mark loan as repaid with txId
-    await supabase
+    // Mark loan as repaid — only update status (repayment_tx_id column does not exist in schema)
+    const { error: updateErr } = await supabase
       .from('loan_applications')
-      .update({ status: 'repaid', repayment_tx_id: txId })
+      .update({ status: 'repaid' })
       .eq('id', id);
+
+    if (updateErr) {
+      // On-chain tx is confirmed — the ALGO moved. DB is out of sync.
+      // Log for manual reconciliation; return success with a warning.
+      console.error(`[Loans] DB update failed for loan ${id} after on-chain repayment ${txId}:`, updateErr);
+      return res.json({
+        ok: true, txId, confirmedRound,
+        warning: 'Repayment confirmed on-chain but DB sync failed — your loan status will be corrected shortly',
+      });
+    }
 
     // Enqueue SCORE_UPDATE — successful repayment increases credit score
     const queue = getOracleQueue();
